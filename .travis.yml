@@ -28,8 +28,8 @@ virtualenv:
   system_site_packages: true
 
 before_install:
-  - add-apt-repository ppa:libreoffice/ppa
-  - apt-get install libreoffice
+  - sudo add-apt-repository ppa:libreoffice/ppa
+  - sudo apt-get install libreoffice
 
 install:
   - pip install Genshi
