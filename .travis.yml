@@ -16,6 +16,13 @@ addons:
       - python-simplejson
       - python-serial
       - python-yaml
+      - python-genshi
+      - python-cairo
+      - libreoffice
+      - python-uno
+      - python-openoffice
+
+
 #      - wkhtmltopdf  # only add if needed and check the before_install section below
 
 # set up an X server to run wkhtmltopdf.
