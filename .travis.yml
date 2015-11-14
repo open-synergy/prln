@@ -14,7 +14,6 @@ addons:
       - python-serial
       - python-yaml
       - python-cairo
-      - python-openoffice
 
 env:
   global:
@@ -30,10 +29,11 @@ virtualenv:
 before_install:
   - sudo add-apt-repository -y ppa:libreoffice/ppa
   - sudo apt-get -y install libreoffice
+  - sudo apt-get -y install python-genshi
+  - sudo apt-get -y install python-uno
+  - sudo apt-get -y install python-openoffice
 
 install:
-  - pip install Genshi
-  - pip install uno
   - git clone --depth=1 https://github.com/OCA/maintainer-quality-tools.git ${HOME}/maintainer-quality-tools
   - export PATH=${HOME}/maintainer-quality-tools/travis:${PATH}
   - travis_install_nightly
