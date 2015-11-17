@@ -23,7 +23,7 @@
     'version': '1.0.0',
     'author': "Michael Viriyananda,Opensynergy Indonesia",
     'category': 'Reporting',
-    'depends': ['account','report_aeroo_ooo'],
+    'depends': ['account', 'report_aeroo_ooo'],
     'description': """
 Aging Payable Account Report.
 ============================
