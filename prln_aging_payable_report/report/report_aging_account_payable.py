@@ -31,6 +31,7 @@ class Parser(report_sxw.rml_parse):
             'time': time,
             'get_invoice_date_from' : self.get_invoice_date_from,
             'get_invoice_date_to' : self.get_invoice_date_to,
+            'get_supplier' : self.get_supplier,
         })
         
     def convert_date(self, date):
@@ -74,3 +75,22 @@ class Parser(report_sxw.rml_parse):
         convert_date_to = self.convert_date(invoice_date_to)
         
         return convert_date_to
+        
+	def get_supplier(self):
+		line_supplier_ids = []
+		no = 1
+		
+		obj_detail_supplier = self.pool.get('pralon.aging_account_payable_detail_supplier')
+		
+		supplier_ids = self.localcontext['data']['form']['supplier_ids']
+		
+		for supplier in obj_detail_supplier.browse(self.cr, self.uid, supplier_ids):
+			res = {
+				'no' : no,
+				'name' : supplier.supplier_id.name,
+				'id' : supplier.supplier_id.id
+			}
+			line_supplier_ids.append(res)
+			no += 1
+			
+		return line_supplier_ids
