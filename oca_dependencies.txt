@@ -14,3 +14,5 @@
 # To provide both the URL and a branch, use:
 # sale-workflow https://github.com/OCA/sale-workflow branchname
 
+aeroo_reports https://github.com/open-synergy/aeroo_reports 6.1
+
