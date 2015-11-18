@@ -3,7 +3,7 @@
     <data>  
 
         <record id="aging_account_payable_view_form" model="ir.ui.view">
-            <field name="name">Print Aging Account Payable</field>
+            <field name="name">Daftar Aging Account Payable</field>
             <field name="model">pralon.aging_account_payable</field>
             <field name="type">form</field>
             <field name="arch" type="xml" >
@@ -34,7 +34,7 @@
         </record>
         
         <record id="aging_account_payable_action" model="ir.actions.act_window">
-            <field name="name">Print Aging Account Payable</field>
+            <field name="name">Daftar Aging Account Payable</field>
             <field name="res_model">pralon.aging_account_payable</field>
             <field name="view_type">form</field>
             <field name="view_mode">form</field>

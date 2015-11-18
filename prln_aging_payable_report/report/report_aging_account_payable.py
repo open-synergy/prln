@@ -76,21 +76,23 @@ class Parser(report_sxw.rml_parse):
         
         return convert_date_to
         
-	def get_supplier(self):
-		line_supplier_ids = []
-		no = 1
-		
-		obj_detail_supplier = self.pool.get('pralon.aging_account_payable_detail_supplier')
-		
-		supplier_ids = self.localcontext['data']['form']['supplier_ids']
-		
-		for supplier in obj_detail_supplier.browse(self.cr, self.uid, supplier_ids):
-			res = {
-				'no' : no,
-				'name' : supplier.supplier_id.name,
-				'id' : supplier.supplier_id.id
-			}
-			line_supplier_ids.append(res)
-			no += 1
-			
-		return line_supplier_ids
+    def get_supplier(self):
+        line_supplier_ids = []
+        no = 1
+        
+        obj_detail_supplier = self.pool.get('pralon.aging_account_payable_detail_supplier')
+        
+        supplier_ids = self.localcontext['data']['form']['supplier_ids']
+        
+        if supplier_ids:
+        
+            for supplier in obj_detail_supplier.browse(self.cr, self.uid, supplier_ids):
+                res = {
+                    'no' : no,
+                    'name' : supplier.supplier_id.name,
+                    'id' : supplier.supplier_id.id
+                }
+                line_supplier_ids.append(res)
+                no += 1
+            
+        return line_supplier_ids
