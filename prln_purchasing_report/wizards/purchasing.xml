@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>  
+
+        <record id="purchasing_view_form" model="ir.ui.view">
+            <field name="name">Purchasing Report Based On Purchase Order</field>
+            <field name="model">pralon.purchasing</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml" >
+                <form string="Print Purchasing Report">
+                	<field name="company_ids" colspan="4">
+                		<tree editable="bottom">
+		                    <field name="company_id" domain="[]"/>				
+                        </tree>
+					</field>
+                	<field name="department_ids" colspan="4">
+                		<tree editable="bottom">
+		                    <field name="department_id" domain="[]"/>	
+						</tree>			
+					</field>
+					<group colspan="4" col="4">
+		                <field name="po_date_from"/>
+		                <field name="po_date_to" string="To"/>
+					</group>
+                    <newline/>
+                    <field name="output_format"/>
+                    <newline/>
+                    <group col="2" colspan="4">
+                        <button icon="gtk-cancel" special="cancel" string="Cancel" type="object"/>
+			            <button name="button_print_report" string="Print" colspan="1" type="object" icon="gtk-apply"/>
+                    </group>
+                </form>
+            </field>
+        </record>
+        
+        <record id="purchasing_action" model="ir.actions.act_window">
+            <field name="name">Purchasing Report Based On Purchase Order</field>
+            <field name="res_model">pralon.purchasing</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>          
+        
+        <record id="purchasing_form_list" model="ir.actions.act_window.view">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="act_window_id" ref="purchasing_action"/>
+            <field name="view_id" ref="purchasing_view_form"/>
+        </record>
+        
+    </data>
+</openerp>
