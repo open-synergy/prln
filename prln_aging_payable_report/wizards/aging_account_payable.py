@@ -45,7 +45,7 @@ aging_account_payable_detail_supplier()
 
 class aging_account_payable(osv.osv_memory):
     _name = 'pralon.aging_account_payable'
-    _description = 'Aging Account Payable Report'
+    _description = 'Daftar Aging Account Payable'
         
     _columns =  {
         'company_ids' : fields.one2many(string='Companies', required=True, obj='pralon.aging_account_payable_detail_companies', fields_id='wizard_id'),
