@@ -31,11 +31,11 @@ Aging Payable Account Report.
 Creates a aging payable account report for accountants based using aeroo
 --------------------------------------------------
 * Wizard with parameter:
-	- Companies
-	- Supplier
-	- Invoice Date From 
-	- Invoice Date To
-	- Output Format(PDF/XLS)
+    - Companies
+    - Supplier
+    - Invoice Date From 
+    - Invoice Date To
+    - Output Format(PDF/XLS)
 
     """,
     'website': 'http://opensynergy-indonesia.com',
