@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>  
+
+        <record id="aging_account_payable_view_form" model="ir.ui.view">
+            <field name="name">Print Aging Account Payable</field>
+            <field name="model">pralon.aging_account_payable</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml" >
+                <form string="Print Aging Account Payable">
+                	<field name="company_ids" colspan="4">
+                		<tree editable="bottom">
+		                    <field name="company_id" domain="[]"/>				
+                        </tree>
+					</field>
+                	<field name="supplier_ids" colspan="4">
+                		<tree editable="bottom">
+		                    <field name="supplier_id" domain="[]"/>	
+						</tree>			
+					</field>
+					<group colspan="4" col="4">
+		                <field name="invoice_date_from"/>
+		                <field name="invoice_date_to" string="To"/>
+					</group>
+                    <newline/>
+                    <field name="output_format"/>
+                    <newline/>
+                    <group col="2" colspan="4">
+                        <button icon="gtk-cancel" special="cancel" string="Cancel" type="object"/>
+			            <button name="button_print_report" string="Print" colspan="1" type="object" icon="gtk-apply"/>
+                    </group>
+                </form>
+            </field>
+        </record>
+        
+        <record id="aging_account_payable_action" model="ir.actions.act_window">
+            <field name="name">Print Aging Account Payable</field>
+            <field name="res_model">pralon.aging_account_payable</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>          
+        
+        <record id="aging_account_payable_form_list" model="ir.actions.act_window.view">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="act_window_id" ref="aging_account_payable_action"/>
+            <field name="view_id" ref="aging_account_payable_view_form"/>
+        </record>
+        
+    </data>
+</openerp>
