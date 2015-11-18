@@ -21,7 +21,7 @@ env:
 
   matrix:
   - LINT_CHECK="1"
-  # - TESTS="1" ODOO_REPO="odoo/odoo"
+  - TESTS="1" ODOO_REPO="odoo/odoo"
 
 virtualenv:
   system_site_packages: true
@@ -31,11 +31,13 @@ before_install:
   - sudo apt-get -qy update
 
 install:
-  - sudo apt-get -y install libreoffice
-  - sudo apt-get -y install python-genshi
-  - sudo apt-get -y install python-uno
-  - sudo apt-get -y install python-openoffice
-  - git clone --depth=1 https://github.com/OCA/maintainer-quality-tools.git ${HOME}/maintainer-quality-tools
+  - sudo apt-get -qy install libreoffice
+  - sudo apt-get -qy install python-genshi
+  - sudo apt-get -qy install python-uno
+  - sudo apt-get -qy install python-openoffice
+  - git clone https://github.com/aeroo/aeroolib
+  - cd aeroolib && sudo python ./setup.py install
+  - git clone --depth=1 https://github.com/open-synergy/maintainer-quality-tools.git ${HOME}/maintainer-quality-tools
   - export PATH=${HOME}/maintainer-quality-tools/travis:${PATH}
   - travis_install_nightly
 
