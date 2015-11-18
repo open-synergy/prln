@@ -2,7 +2,7 @@
 ##############################################################################
 #
 #    Author: Michael Viriyananda
-#    Copyright 2015 Opensynergy Indonesia
+#    Copyright 2015 OpenSynergy Indonesia
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU Affero General Public License as
@@ -21,7 +21,8 @@
 {
     'name': 'Pralon Aging Payable Account Report Module',
     'version': '1.0.0',
-    'author': "Michael Viriyananda,Opensynergy Indonesia",
+    'author': "Michael Viriyananda,OpenSynergy Indonesia",
+    'license': 'AGPL-3',
     'category': 'Reporting',
     'depends': ['account', 'report_aeroo_ooo'],
     'description': """

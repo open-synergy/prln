@@ -19,4 +19,4 @@
 #
 ##############################################################################
 
-import report_aging_account_payable
+from . import report_aging_account_payable
