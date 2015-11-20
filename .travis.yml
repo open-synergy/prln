@@ -37,7 +37,7 @@ install:
   - sudo apt-get -qy install python-openoffice
   - git clone https://github.com/aeroo/aeroolib
   - sudo python aeroolib/setup.py install
-  # - cd ~
+  - cd ..
   - git clone --depth=1 https://github.com/open-synergy/maintainer-quality-tools.git ${HOME}/maintainer-quality-tools
   - export PATH=${HOME}/maintainer-quality-tools/travis:${PATH}
   - travis_install_nightly
