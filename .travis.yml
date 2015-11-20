@@ -35,9 +35,9 @@ install:
   - sudo apt-get -qy install python-genshi
   - sudo apt-get -qy install python-uno
   - sudo apt-get -qy install python-openoffice
-  - git clone https://github.com/aeroo/aeroolib
-  - cd aeroolib && sudo python ./setup.py install
-  - cd ~
+  # - git clone https://github.com/aeroo/aeroolib
+  # - cd aeroolib && sudo python ./setup.py install
+  # - cd ~
   - git clone --depth=1 https://github.com/open-synergy/maintainer-quality-tools.git ${HOME}/maintainer-quality-tools
   - export PATH=${HOME}/maintainer-quality-tools/travis:${PATH}
   - travis_install_nightly
