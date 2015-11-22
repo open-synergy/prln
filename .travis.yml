@@ -38,7 +38,7 @@ install:
   - if [[ ${TESTS} == 1 ]]; then git clone https://github.com/aeroo/aeroolib; fi
   - if [[ ${TESTS} == 1 ]]; then cd aeroolib; fi
   - if [[ ${TESTS} == 1 ]]; then sudo python ./setup.py install; fi
-  - if [[ ${TESTS} == 1 ]]; cd ~/build/open-synergy/prln; fi
+  - if [[ ${TESTS} == 1 ]]; then cd ~/build/open-synergy/prln; fi
   - git clone --depth=1 https://github.com/open-synergy/maintainer-quality-tools.git ${HOME}/maintainer-quality-tools
   - export PATH=${HOME}/maintainer-quality-tools/travis:${PATH}
   - travis_install_nightly
