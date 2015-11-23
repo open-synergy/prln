@@ -21,35 +21,13 @@
 
 from osv import fields, osv
 
-class aging_account_payable_detail_companies(osv.osv_memory):
-    _name = 'pralon.aging_account_payable_detail_companies'
-    _description = 'Aging Account Payable Detail Companies'
-        
-    _columns =  {
-        'wizard_id' : fields.many2one(string='Wizard ID', obj='pralon.aging_account_payable', required=True),
-        'company_id' : fields.many2one(string='Companies', obj='res.company', required=True),
-    }
-
-aging_account_payable_detail_companies()
-                                
-class aging_account_payable_detail_supplier(osv.osv_memory):
-    _name = 'pralon.aging_account_payable_detail_supplier'
-    _description = 'Aging Account Payable Detail Supplier'
-
-    _columns =  {
-        'wizard_id' : fields.many2one(string='Wizard ID', obj='pralon.aging_account_payable', required=True),
-        'supplier_id' : fields.many2one(string='Supplier', obj='res.partner', required=True),
-    }
-                                
-aging_account_payable_detail_supplier()
-
 class aging_account_payable(osv.osv_memory):
     _name = 'pralon.aging_account_payable'
     _description = 'Daftar Aging Account Payable'
         
     _columns =  {
-        'company_ids' : fields.one2many(string='Companies', required=True, obj='pralon.aging_account_payable_detail_companies', fields_id='wizard_id'),
-        'supplier_ids' : fields.one2many(string='Supplier', required=True, obj='pralon.aging_account_payable_detail_supplier', fields_id='wizard_id'),
+        'company_ids' : fields.many2many(obj='res.company', rel='aging_acc_payable_company_rel', id1='wizard_id', id2='company_id', string='Companies'),
+        'supplier_ids' : fields.many2many(obj='res.partner', rel='aging_acc_payable_supplier_rel', id1='wizard_id', id2='supplier_id', string='Supplier'),
         'invoice_date_from' : fields.date(string='Invoice Date From', required=True),
         'invoice_date_to' : fields.date(string='Invoice Date To', required=True),
         'output_format' : fields.selection(string='Output Format', required=True, selection=[('pdf', 'PDF'),('xls', 'XLS')])
