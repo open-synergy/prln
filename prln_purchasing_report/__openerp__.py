@@ -34,7 +34,7 @@ Creates a purchasing report for accountants based using aeroo
 * Wizard with parameter:
     - Companies
     - Departments
-    - PO Date From 
+    - PO Date From
     - PO Date To
     - Output Format(PDF/XLS/CSV)
 
