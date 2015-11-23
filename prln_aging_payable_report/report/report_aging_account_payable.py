@@ -31,7 +31,9 @@ class Parser(report_sxw.rml_parse):
             'time': time,
             'get_invoice_date_from' : self.get_invoice_date_from,
             'get_invoice_date_to' : self.get_invoice_date_to,
+            'get_companies' : self.get_companies,
             'get_supplier' : self.get_supplier,
+            'get_lines' : self.lines
         })
         
     def convert_date(self, date):
@@ -76,23 +78,95 @@ class Parser(report_sxw.rml_parse):
         
         return convert_date_to
         
+    def get_companies(self):
+        line_companies_ids = []
+
+        obj_company = self.pool.get('res.company')
+        
+        company_ids = self.localcontext['data']['form']['company_ids']
+
+        if company_ids:
+        
+            for company_id in obj_company.search(self.cr, self.uid,[('id', '=', company_ids)]):             
+                if company_id:
+                    company = obj_company.browse(self.cr, self.uid, company_id)
+                    res = {
+                        'name' : company.name,
+                        'id' : company.id
+                    }
+                    line_companies_ids.append(res)
+            
+        return line_companies_ids
+        
     def get_supplier(self):
         line_supplier_ids = []
         no = 1
         
-        obj_detail_supplier = self.pool.get('pralon.aging_account_payable_detail_supplier')
+        obj_supplier = self.pool.get('res.partner')
         
         supplier_ids = self.localcontext['data']['form']['supplier_ids']
-        
+
         if supplier_ids:
         
-            for supplier in obj_detail_supplier.browse(self.cr, self.uid, supplier_ids):
-                res = {
-                    'no' : no,
-                    'name' : supplier.supplier_id.name,
-                    'id' : supplier.supplier_id.id
-                }
-                line_supplier_ids.append(res)
-                no += 1
+            for supplier_id in obj_supplier.search(self.cr, self.uid,[('id', '=', supplier_ids)]):
+                if supplier_id:
+                    supplier = obj_supplier.browse(self.cr, self.uid, supplier_id)
+                    res = {
+                        'no' : no,
+                        'name' : supplier.name,
+                        'id' : supplier.id
+                    }
+                    line_supplier_ids.append(res)
+                    no += 1 
             
         return line_supplier_ids
+        
+    def lines(self, company_id, supplier_id):
+        lines = []
+        invoice_date_from = self.localcontext['data']['form']['invoice_date_from']
+        invoice_date_to = self.localcontext['data']['form']['invoice_date_to']
+        
+        ord_date = datetime.strptime(date, '%Y-%m-%d').toordinal()
+        
+        obj_account_move = self.pool.get('account.move')
+        obj_account_move_line = self.pool.get('account.move.line')
+        obj_account_period = self.pool.get('account.period')
+        
+        period_id = obj_account_period.find(self.cr, self.uid, invoice_date_from)
+        
+        kriteria_account_move = [
+            ('company_id', '=', company_id),
+            ('partner_id', '=', supplier_id),
+            ('state', '=', 'posted'),
+            ('period_id', '=', period_id)
+        ]
+        
+        move_ids = obj_account_move.search(self.cr, self.uid, kriteria_account_move)
+
+        if move_ids:
+            for move_id in move_ids:
+                if move_id:
+                
+                    kriteria_account_move_line = [('move_id', '=', move_id), ('credit', '>', 0), ('account_id.type', '=', 'payable')]
+                    
+                    move_line_ids = obj_account_move_line.search(self.cr, self.uid, kriteria_account_move_line)
+                    
+                    if move_line_ids:
+                        for move_line_id in move_line_ids:
+                            move_line = obj_account_move_line.browse(self.cr, self.uid, move_line_id)
+
+                            if invoice_date_from <= move_line.date_maturity and invoice_date_to >= move_line.date_maturity:
+                                res = {
+                                    'name' : move_line.move_id.name,
+                                    'account_payable' : move_line.credit,
+                                    'current' : move_line.credit,
+                                    '1-30' : False,
+                                    '31-60' : False,
+                                    '61-90' : False,
+                                    '>=90' : False
+                                }
+                                lines.append(res)
+                    
+        return lines
+                    
+        
