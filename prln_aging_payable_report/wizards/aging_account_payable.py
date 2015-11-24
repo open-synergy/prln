@@ -43,10 +43,14 @@ class aging_account_payable(osv.osv_memory):
         ),
         'invoice_date_from': fields.date(
             string='Invoice Date From',
-            required=True
+            required=False
         ),
         'invoice_date_to': fields.date(
             string='Invoice Date To',
+            required=False
+        ),
+        'date_as_of': fields.date(
+            string='Date As Of',
             required=True
         ),
         'output_format': fields.selection(
