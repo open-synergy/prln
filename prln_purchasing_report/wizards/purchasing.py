@@ -27,11 +27,10 @@ class purchasing(osv.osv_memory):
     _description = 'Purchasing Report Based On Purchase Order'
 
     _columns = {
-        'company_ids': fields.many2many(obj='res.company',
-                            rel='purchasing_company_rel',
-                            id1='wizard_id',
-                            id2='company_id',
-                            string='Companies'),
+        'company_ids': fieds.many2many(
+                obj='res.company', rel='purchasing_company_rel',
+                id1='wizard_id', id2='company_id',
+                string='Companies'),
         'supplier_ids': fields.many2many(obj='hr.department',
                             rel='purchasing_supplier_rel',
                             id1='wizard_id',
