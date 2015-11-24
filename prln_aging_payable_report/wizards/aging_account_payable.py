@@ -27,23 +27,32 @@ class aging_account_payable(osv.osv_memory):
     _description = 'Daftar Aging Account Payable'
 
     _columns = {
-        'company_ids': fields.many2many(obj='res.company',
-                                        rel='aging_acc_payable_company_rel',
-                                        id1='wizard_id',
-                                        id2='company_id',
-                                        string='Companies'),
-        'supplier_ids': fields.many2many(obj='res.partner',
-                                        rel='aging_acc_payable_supplier_rel',
-                                        id1='wizard_id',
-                                        id2='supplier_id',
-                                        string='Supplier'),
-        'invoice_date_from': fields.date(string='Invoice Date From',
-                                        required=True),
-        'invoice_date_to': fields.date(string='Invoice Date To',
-                                        required=True),
-        'output_format': fields.selection(string='Output Format',
-                                        required=True,
-                                        selection=[('pdf', 'PDF'), ('xls', 'XLS')])
+        'company_ids': fields.many2many(
+            obj='res.company',
+            rel='aging_acc_payable_company_rel',
+            id1='wizard_id',
+            id2='company_id',
+            string='Companies'
+        ),
+        'supplier_ids': fields.many2many(
+            obj='res.partner',
+            rel='aging_acc_payable_supplier_rel',
+            id1='wizard_id',
+            id2='supplier_id',
+            string='Supplier'
+        ),
+        'invoice_date_from': fields.date(
+            string='Invoice Date From',
+            required=True
+        ),
+        'invoice_date_to': fields.date(
+            string='Invoice Date To',
+            required=True
+        ),
+        'output_format': fields.selection(
+            string='Output Format',
+            required=True,
+            selection=[('pdf', 'PDF'), ('xls', 'XLS')])
     }
 
     def button_print_report(self, cr, uid, ids, data, context=None):
@@ -75,9 +84,9 @@ class aging_account_payable(osv.osv_memory):
             raise osv.except_osv('Warning', 'Output Format cannot be empty !')
 
         return {
-                'type': 'ir.actions.report.xml',
-                'report_name': output_format,
-                'datas': datas,
+            'type': 'ir.actions.report.xml',
+            'report_name': output_format,
+            'datas': datas,
         }
 
 aging_account_payable()
