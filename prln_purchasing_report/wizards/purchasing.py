@@ -27,37 +27,26 @@ class purchasing(osv.osv_memory):
     _description = 'Purchasing Report Based On Purchase Order'
 
     _columns = {
-        'company_ids': fields.many2many(
-                            obj='res.company',
+        'company_ids': fields.many2many(obj='res.company',
                             rel='purchasing_company_rel',
                             id1='wizard_id',
                             id2='company_id',
-                            string='Companies'
-                            ),
-        'supplier_ids': fields.many2many(
-                            obj='hr.department',
+                            string='Companies'),
+        'supplier_ids': fields.many2many(obj='hr.department',
                             rel='purchasing_supplier_rel',
                             id1='wizard_id',
                             id2='department_id',
-                            string='Departments'
-                            ),
-        'po_date_from': fields.date(
-                            string='PO Date From',
-                            required=True
-                            ),
-        'po_date_to': fields.date(
-                            string='PO Date To',
-                            required=True
-                            ),
-        'output_format': fields.selection(
-                            string='Output Format',
+                            string='Departments'),
+        'po_date_from': fields.date(string='PO Date From',
+                            required=True),
+        'po_date_to': fields.date(string='PO Date To',
+                            required=True),
+        'output_format': fields.selection(string='Output Format',
                             required=True,
                             selection=[
                                     ('pdf', 'PDF'),
                                     ('xls', 'XLS'),
-                                    ('csv', 'CSV')
-                                    ]
-                            )
+                                    ('csv', 'CSV')])
     }
 
     def button_print_report(self, cr, uid, ids, data, context=None):
@@ -72,7 +61,7 @@ class purchasing(osv.osv_memory):
         po_date_from = datas['form']['po_date_from']
         po_date_to = datas['form']['po_date_to']
 
-        if po_date_form > po_date_to:
+        if po_date_from > po_date_to:
             err = 'PO Date From cannot be greater than PO Date To !'
             raise osv.except_osv('Warning', err)
 

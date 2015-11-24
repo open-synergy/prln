@@ -27,30 +27,21 @@ class aging_account_payable(osv.osv_memory):
     _description = 'Daftar Aging Account Payable'
 
     _columns = {
-        'company_ids': fields.many2many(
-                            obj='res.company',
+        'company_ids': fields.many2many(obj='res.company',
                             rel='aging_acc_payable_company_rel',
                             id1='wizard_id',
                             id2='company_id',
-                            string='Companies'
-                            ),
-        'supplier_ids': fields.many2many(
-                            obj='res.partner',
+                            string='Companies'),
+        'supplier_ids': fields.many2many(obj='res.partner',
                             rel='aging_acc_payable_supplier_rel',
                             id1='wizard_id',
                             id2='supplier_id',
-                            string='Supplier'
-                            ),
-        'invoice_date_from': fields.date(
-                                string='Invoice Date From',
-                                required=True
-                                ),
-        'invoice_date_to': fields.date(
-                                string='Invoice Date To',
-                                required=True
-                                ),
-        'output_format': fields.selection(
-                                string='Output Format',
+                            string='Supplier'),
+        'invoice_date_from': fields.date(string='Invoice Date From',
+                                required=True),
+        'invoice_date_to': fields.date(string='Invoice Date To',
+                                required=True),
+        'output_format': fields.selection(string='Output Format',
                                 required=True,
                                 selection=[('pdf', 'PDF'), ('xls', 'XLS')])
     }
