@@ -34,7 +34,7 @@ class purchasing(osv.osv_memory):
             id2='company_id',
             string='Companies'
         ),
-        'supplier_ids': fields.many2many(
+        'department_ids': fields.many2many(
             obj='hr.department',
             rel='purchasing_supplier_rel',
             id1='wizard_id',

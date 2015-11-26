@@ -21,16 +21,19 @@
 
 import time
 from report import report_sxw
+from datetime import datetime
 
 
 class Parser(report_sxw.rml_parse):
 
     def __init__(self, cr, uid, name, context):
         super(Parser, self).__init__(cr, uid, name, context)
+        self.lst_lines = []
         self.localcontext.update({
             'time': time,
             'get_invoice_date_from': self.get_invoice_date_from,
             'get_invoice_date_to': self.get_invoice_date_to,
+            'get_date_as_of': self.get_date_as_of,
             'get_companies': self.get_companies,
             'get_supplier': self.get_supplier,
             'get_lines': self.lines
@@ -68,17 +71,28 @@ class Parser(report_sxw.rml_parse):
         return convert_date
 
     def get_invoice_date_from(self):
+        convert_date_from = '-'
         data_form = self.localcontext['data']['form']
         invoice_date_from = data_form['invoice_date_from']
-        convert_date_from = self.convert_date(invoice_date_from)
+        if invoice_date_from:
+            convert_date_from = self.convert_date(invoice_date_from)
         return convert_date_from
 
     def get_invoice_date_to(self):
+        convert_date_to = '-'
         data_form = self.localcontext['data']['form']
         invoice_date_to = data_form['invoice_date_to']
-        convert_date_to = self.convert_date(invoice_date_to)
-
+        if convert_date_to:
+            convert_date_to = self.convert_date(invoice_date_to)
         return convert_date_to
+
+    def get_date_as_of(self):
+        convert_date_as_of = '-'
+        data_form = self.localcontext['data']['form']
+        date_as_of = data_form['date_as_of']
+        if date_as_of:
+            convert_date_as_of = self.convert_date(date_as_of)
+        return convert_date_as_of
 
     def get_companies(self):
         line_companies_ids = []
@@ -127,60 +141,213 @@ class Parser(report_sxw.rml_parse):
 
         return line_supplier_ids
 
-    def lines(self, company_id, supplier_id):
-        lines = []
+    def lines(self):
         data_form = self.localcontext['data']['form']
         date_from = data_form['invoice_date_from']
         date_to = data_form['invoice_date_to']
+        date_as_of = data_form['date_as_of']
 
         obj_move = self.pool.get('account.move')
         obj_move_line = self.pool.get('account.move.line')
-        obj_period = self.pool.get('account.period')
 
-        period_id = obj_period.find(self.cr, self.uid, date_from)
+        ord_date = datetime.strptime(date_as_of, '%Y-%m-%d').toordinal()
 
-        kriteria_move = [
-            ('company_id', '=', company_id),
-            ('partner_id', '=', supplier_id),
-            ('state', '=', 'posted'),
-            ('period_id', '=', period_id)
-        ]
+        # GET LIST COMPANIES
+        for company in self.get_companies():
+            t_acc_payable = 0.0
+            t_curr = 0.0
+            t_aging1 = 0.0
+            t_aging2 = 0.0
+            t_aging3 = 0.0
+            t_aging4 = 0.0
 
-        move_ids = obj_move.search(self.cr, self.uid, kriteria_move)
+            dict_companies = {
+                'company_id': company['id'],
+                'company_name': company['name'],
+                'supplier_ids': []
+            }
 
-        if move_ids:
-            for move_id in move_ids:
-                if move_id:
+            # GET LIST SUPPLIERS
+            for supplier in self.get_supplier():
+                st_acc_payable = 0.0
+                st_curr = 0.0
+                st_aging1 = 0.0
+                st_aging2 = 0.0
+                st_aging3 = 0.0
+                st_aging4 = 0.0
 
-                    move_line = [
-                        ('move_id', '=', move_id),
-                        ('credit', '>', 0),
-                        ('account_id.type', '=', 'payable')
+                dict_supplier = {
+                    'no': supplier['no'],
+                    'supplier_id': supplier['id'],
+                    'supplier_name': supplier['name'],
+                    'lines': []
+                }
+
+                # GET LINES
+
+                if date_from and not date_to:
+                    kriteria_move = [
+                        ('company_id', '=', company['id']),
+                        ('partner_id', '=', supplier['id']),
+                        ('state', '=', 'posted'),
+                        ('date', '>=', date_from)
                     ]
 
-                    move_line_ids = obj_move_line.search(
-                        self.cr, self.uid, move_line
-                    )
+                if not date_from and date_to:
+                    kriteria_move = [
+                        ('company_id', '=', company['id']),
+                        ('partner_id', '=', supplier['id']),
+                        ('state', '=', 'posted'),
+                        ('date', '<=', date_to)
+                    ]
 
-                    if move_line_ids:
-                        for move_line_id in move_line_ids:
+                if date_from and date_to:
+                    kriteria_move = [
+                        ('company_id', '=', company['id']),
+                        ('partner_id', '=', supplier['id']),
+                        ('state', '=', 'posted'),
+                        ('date', '>=', date_from),
+                        ('date', '<=', date_to)
+                    ]
 
-                            move_line = obj_move_line.browse(
-                                self.cr, self.uid, move_line_id
+                if not date_from and not date_to:
+                    kriteria_move = [
+                        ('company_id', '=', company['id']),
+                        ('partner_id', '=', supplier['id']),
+                        ('state', '=', 'posted')
+                    ]
+
+                move_ids = obj_move.search(
+                    self.cr, self.uid, kriteria_move, order='name asc'
+                )
+
+                if move_ids:
+                    for move_id in move_ids:
+                        if move_id:
+
+                            move_line = [
+                                ('move_id', '=', move_id),
+                                ('credit', '>', 0),
+                                ('account_id.type', '=', 'payable')
+                            ]
+
+                            move_line_ids = obj_move_line.search(
+                                self.cr, self.uid, move_line, order='name asc'
                             )
 
-                            date_due = move_line.date_maturity
+                            if move_line_ids:
+                                for move_line_id in move_line_ids:
 
-                            if date_from <= date_due and date_to >= date_due:
-                                res = {
-                                    'name': move_line.move_id.name,
-                                    'account_payable': move_line.credit,
-                                    'current': move_line.credit,
-                                    '1-30': False,
-                                    '31-60': False,
-                                    '61-90': False,
-                                    '>=90': False
-                                }
-                                lines.append(res)
+                                    move_line = obj_move_line.browse(
+                                        self.cr, self.uid, move_line_id
+                                    )
 
-        return lines
+                                    date_due = move_line.date_maturity
+                                    residual = move_line.amount_residual
+                                    acc_payable = move_line.credit
+                                    name = move_line.move_id.name
+
+                                    if date_due:
+                                        ord_date_due = datetime.strptime(
+                                            date_due, '%Y-%m-%d').toordinal()
+                                        overdue = ord_date_due - ord_date
+
+                                        # NOTE
+                                        # aging1 : overdue 1-30
+                                        # aging2 : overdue 31-60
+                                        # aging3 : overdue 61-90
+                                        # aging4 : overdue >=90
+
+                                        if overdue >= 0:
+                                            res = {
+                                                'name': name,
+                                                'acc_payable': acc_payable,
+                                                'current': residual,
+                                                'aging1': False,
+                                                'aging2': False,
+                                                'aging3': False,
+                                                'aging4': False
+                                            }
+                                            st_acc_payable += acc_payable
+                                            st_curr += residual
+
+                                        if overdue <= 0:
+                                            overdue = abs(overdue)
+
+                                            if overdue >= 1 and overdue <= 30:
+                                                res = {
+                                                    'name': name,
+                                                    'acc_payable': acc_payable,
+                                                    'current': False,
+                                                    'aging1': residual,
+                                                    'aging2': False,
+                                                    'aging3': False,
+                                                    'aging4': False
+                                                }
+                                                st_acc_payable += acc_payable
+                                                st_aging1 += residual
+
+                                            if overdue >= 31 and overdue <= 60:
+                                                res = {
+                                                    'name': name,
+                                                    'acc_payable': acc_payable,
+                                                    'current': False,
+                                                    'aging1': False,
+                                                    'aging2': residual,
+                                                    'aging3': False,
+                                                    'aging4': False
+                                                }
+                                                st_acc_payable += acc_payable
+                                                st_aging2 += residual
+
+                                            if overdue >= 61 and overdue <= 90:
+                                                res = {
+                                                    'name': name,
+                                                    'acc_payable': acc_payable,
+                                                    'current': False,
+                                                    'aging1': False,
+                                                    'aging2': False,
+                                                    'aging3': residual,
+                                                    'aging4': False
+                                                }
+                                                st_acc_payable += acc_payable
+                                                st_aging3 += residual
+
+                                            if overdue >= 90:
+                                                res = {
+                                                    'name': name,
+                                                    'acc_payable': acc_payable,
+                                                    'current': False,
+                                                    'aging1': False,
+                                                    'aging2': False,
+                                                    'aging3': False,
+                                                    'aging4': residual
+                                                }
+                                                st_acc_payable += acc_payable
+                                                st_aging4 += residual
+                                        dict_supplier['lines'].append(res)
+
+                dict_supplier['st_acc_payable'] = st_acc_payable
+                dict_supplier['st_curr'] = st_curr
+                dict_supplier['st_aging1'] = st_aging1
+                dict_supplier['st_aging2'] = st_aging2
+                dict_supplier['st_aging3'] = st_aging3
+                dict_supplier['st_aging4'] = st_aging4
+
+                dict_companies['supplier_ids'].append(dict_supplier)
+
+                t_acc_payable += st_acc_payable
+                t_curr += st_curr
+                t_aging1 += st_aging1
+                t_aging2 += st_aging2
+                t_aging3 += st_aging3
+                t_aging4 += st_aging4
+
+            dict_companies['t_acc_payable'] = t_acc_payable
+            dict_companies['t_curr'] = t_curr
+            dict_companies['t_aging1'] = t_aging1
+            dict_companies['t_aging2'] = t_aging2
+            dict_companies['t_aging3'] = t_aging3
+            dict_companies['t_aging4'] = t_aging4
+        self.lst_lines.append(dict_companies)
+        return self.lst_lines

@@ -59,6 +59,21 @@ class aging_account_payable(osv.osv_memory):
             selection=[('pdf', 'PDF'), ('xls', 'XLS')])
     }
 
+    def fields_view_get(
+        self, cr, uid, view_id=None, view_type='form',
+        context=None, toolbar=False, submenu=False
+    ):
+        res = super(aging_account_payable, self).fields_view_get(
+            cr, uid, view_id=view_id, view_type=view_type,
+            context=context, toolbar=toolbar, submenu=False)
+
+        if view_type == 'form':
+
+            for field in res['fields']:
+                if field == 'supplier_ids':
+                    res['fields'][field]['domain'] = [('supplier', '=', 1)]
+        return res
+
     def button_print_report(self, cr, uid, ids, data, context=None):
         datas = {}
         output_format = ''

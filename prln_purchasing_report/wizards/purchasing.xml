@@ -8,16 +8,8 @@
             <field name="type">form</field>
             <field name="arch" type="xml" >
                 <form string="Print Purchasing Report">
-                	<field name="company_ids" colspan="4">
-                		<tree editable="bottom">
-		                    <field name="company_id" domain="[]"/>				
-                        </tree>
-					</field>
-                	<field name="department_ids" colspan="4">
-                		<tree editable="bottom">
-		                    <field name="department_id" domain="[]"/>	
-						</tree>			
-					</field>
+                	<field name="company_ids" colspan="4"/>
+                	<field name="department_ids" colspan="4"/>
 					<group colspan="4" col="4">
 		                <field name="po_date_from"/>
 		                <field name="po_date_to" string="To"/>

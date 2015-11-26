@@ -31,6 +31,8 @@ class Parser(report_sxw.rml_parse):
             'time': time,
             'get_po_date_from': self.get_po_date_from,
             'get_po_date_to': self.get_po_date_to,
+            'get_companies': self.get_companies,
+            'get_department': self.get_department,
         })
 
     def convert_date(self, date):
@@ -74,3 +76,46 @@ class Parser(report_sxw.rml_parse):
         convert_date_to = self.convert_date(po_date_to)
 
         return convert_date_to
+
+    def get_companies(self):
+        line_companies_ids = []
+
+        obj_company = self.pool.get('res.company')
+        data_form = self.localcontext['data']['form']
+        data_company_ids = data_form['company_ids']
+
+        if data_company_ids:
+            kriteria = [('id', '=', data_company_ids)]
+            company_ids = obj_company.search(self.cr, self.uid, kriteria)
+            for company_id in company_ids:
+                if company_id:
+                    company = obj_company.browse(self.cr, self.uid, company_id)
+                    res = {
+                        'name': company.name,
+                        'id': company.id
+                    }
+                    line_companies_ids.append(res)
+
+        return line_companies_ids
+
+    def get_department(self):
+        line_department_ids = []
+
+        obj_department = self.pool.get('hr.department')
+        data_form = self.localcontext['data']['form']
+        data_department_ids = data_form['department_ids']
+
+        if data_department_ids:
+            kriteria = [('id', '=', data_department_ids)]
+            department_ids = obj_department.search(self.cr, self.uid, kriteria)
+            for department_id in department_ids:
+                if department_id:
+                    department = obj_department.browse(
+                        self.cr, self.uid, department_id)
+                    res = {
+                        'name': department.name,
+                        'id': department.id
+                    }
+                    line_department_ids.append(res)
+
+        return line_department_ids
