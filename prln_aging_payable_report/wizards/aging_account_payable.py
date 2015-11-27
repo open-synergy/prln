@@ -20,6 +20,7 @@
 ##############################################################################
 
 from osv import fields, osv
+from tools.translate import _
 
 
 class aging_account_payable(osv.osv_memory):
@@ -87,20 +88,23 @@ class aging_account_payable(osv.osv_memory):
         invoice_date_to = datas['form']['invoice_date_to']
 
         if invoice_date_from > invoice_date_to:
-            err = 'Invoice Date From cannot be greater than Invoice Date To !'
-            raise osv.except_osv('Warning', err)
+            err = 'Invoice Date From cannot be greater than Invoice Date To'
+            raise osv.except_osv(_('Warning'), _(err))
 
         if datas['form']['company_ids'] == []:
-            raise osv.except_osv('Warning', 'Companies cannot be empty !')
+            err = 'Companies cannot be empty'
+            raise osv.except_osv(_('Warning'), _(err))
         if datas['form']['supplier_ids'] == []:
-            raise osv.except_osv('Warning', 'Supplier cannot be empty !')
+            err = 'Supplier cannot be empty'
+            raise osv.except_osv(_('Warning'), _(err))
 
         if datas['form']['output_format'] == 'xls':
             output_format = 'report_aging_account_payable_xls'
         elif datas['form']['output_format'] == 'pdf':
             output_format = 'report_aging_account_payable_pdf'
         else:
-            raise osv.except_osv('Warning', 'Output Format cannot be empty !')
+            err = 'Output Format cannot be empty'
+            raise osv.except_osv(_('Warning'), _(err))
 
         return {
             'type': 'ir.actions.report.xml',
