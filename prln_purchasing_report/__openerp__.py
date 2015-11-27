@@ -24,7 +24,7 @@
     'author': "Michael Viriyananda,OpenSynergy Indonesia",
     'license': 'AGPL-3',
     'category': 'Reporting',
-    'depends': ['account', 'hr', 'report_aeroo_ooo'],
+    'depends': ['purchase', 'hr', 'report_aeroo_ooo'],
     'description': """
 Purchasing Report Based On Purchase Order.
 ============================
@@ -34,7 +34,7 @@ Creates a purchasing report for accountants based using aeroo
 * Wizard with parameter:
     - Companies
     - Departments
-    - PO Date From 
+    - PO Date From
     - PO Date To
     - Output Format(PDF/XLS/CSV)
 

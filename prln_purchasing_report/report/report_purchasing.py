@@ -19,9 +19,9 @@
 #
 ##############################################################################
 
-from datetime import datetime,date,time
 import time
 from report import report_sxw
+
 
 class Parser(report_sxw.rml_parse):
 
@@ -29,48 +29,93 @@ class Parser(report_sxw.rml_parse):
         super(Parser, self).__init__(cr, uid, name, context)
         self.localcontext.update({
             'time': time,
-            'get_po_date_from' : self.get_po_date_from,
-            'get_po_date_to' : self.get_po_date_to,
+            'get_po_date_from': self.get_po_date_from,
+            'get_po_date_to': self.get_po_date_to,
+            'get_companies': self.get_companies,
+            'get_department': self.get_department,
         })
-        
+
     def convert_date(self, date):
         convert_date = ''
         nama_bulan = ''
-        
+
         if date:
 
             date_tahun = date[0:4]
             date_bulan = date[5:7]
             date_tanggal = date[8:10]
-                   
+
             bulan = {
-                    '01' : 'Januari',
-                    '02' : 'Februari',
-                    '03' : 'Maret',
-                    '04' : 'April',
-                    '05' : 'Mei',
-                    '06' : 'Juni',
-                    '07' : 'Juli',
-                    '08' : 'Agustus',
-                    '09' : 'September',
-                    '10' : 'Oktober',
-                    '11' : 'November',
-                    '12' : 'Desember'
-                    }
-                    
+                '01': 'Januari',
+                '02': 'Februari',
+                '03': 'Maret',
+                '04': 'April',
+                '05': 'Mei',
+                '06': 'Juni',
+                '07': 'Juli',
+                '08': 'Agustus',
+                '09': 'September',
+                '10': 'Oktober',
+                '11': 'November',
+                '12': 'Desember'
+            }
+
             nama_bulan = bulan.get(date_bulan, False)
-        
+
             convert_date = date_tanggal + ' ' + nama_bulan + ' ' + date_tahun
-        
+
         return convert_date
-        
+
     def get_po_date_from(self):
         po_date_from = self.localcontext['data']['form']['po_date_from']
         convert_date_from = self.convert_date(po_date_from)
         return convert_date_from
-        
+
     def get_po_date_to(self):
         po_date_to = self.localcontext['data']['form']['po_date_to']
         convert_date_to = self.convert_date(po_date_to)
-        
+
         return convert_date_to
+
+    def get_companies(self):
+        line_companies_ids = []
+
+        obj_company = self.pool.get('res.company')
+        data_form = self.localcontext['data']['form']
+        data_company_ids = data_form['company_ids']
+
+        if data_company_ids:
+            kriteria = [('id', '=', data_company_ids)]
+            company_ids = obj_company.search(self.cr, self.uid, kriteria)
+            for company_id in company_ids:
+                if company_id:
+                    company = obj_company.browse(self.cr, self.uid, company_id)
+                    res = {
+                        'name': company.name,
+                        'id': company.id
+                    }
+                    line_companies_ids.append(res)
+
+        return line_companies_ids
+
+    def get_department(self):
+        line_department_ids = []
+
+        obj_department = self.pool.get('hr.department')
+        data_form = self.localcontext['data']['form']
+        data_department_ids = data_form['department_ids']
+
+        if data_department_ids:
+            kriteria = [('id', '=', data_department_ids)]
+            department_ids = obj_department.search(self.cr, self.uid, kriteria)
+            for department_id in department_ids:
+                if department_id:
+                    department = obj_department.browse(
+                        self.cr, self.uid, department_id)
+                    res = {
+                        'name': department.name,
+                        'id': department.id
+                    }
+                    line_department_ids.append(res)
+
+        return line_department_ids

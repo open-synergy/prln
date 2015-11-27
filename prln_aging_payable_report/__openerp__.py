@@ -34,13 +34,13 @@ Creates a aging payable account report for accountants based using aeroo
 * Wizard with parameter:
     - Companies
     - Supplier
-    - Invoice Date From 
+    - Invoice Date From
     - Invoice Date To
     - Output Format(PDF/XLS)
 
     """,
     'website': 'http://opensynergy-indonesia.com',
-    'data': ['wizards/aging_account_payable.xml','report/report.xml'],
+    'data': ['wizards/aging_account_payable.xml', 'report/report.xml'],
     'demo': [],
     'installable': True,
     'auto_install': False,
