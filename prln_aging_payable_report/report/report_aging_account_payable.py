@@ -82,7 +82,7 @@ class Parser(report_sxw.rml_parse):
         convert_date_to = '-'
         data_form = self.localcontext['data']['form']
         invoice_date_to = data_form['invoice_date_to']
-        if convert_date_to:
+        if invoice_date_to:
             convert_date_to = self.convert_date(invoice_date_to)
         return convert_date_to
 
@@ -230,102 +230,104 @@ class Parser(report_sxw.rml_parse):
                                 ('credit', '>', 0),
                                 ('account_id.type', '=', 'payable')
                             ]
+                            
+                            ctx = {}
+                            ctx['date'] =  date_as_of
 
                             move_line_ids = obj_move_line.search(
                                 self.cr, self.uid, move_line, order='name asc'
                             )
 
                             if move_line_ids:
-                                for move_line_id in move_line_ids:
 
-                                    move_line = obj_move_line.browse(
-                                        self.cr, self.uid, move_line_id
-                                    )
+                                move_line = obj_move_line.browse(
+                                    self.cr, self.uid, move_line_ids, ctx
+                                )[0]
 
-                                    date_due = move_line.date_maturity
-                                    residual = move_line.amount_residual
-                                    acc_payable = move_line.credit
-                                    name = move_line.move_id.name
+                                date_due = move_line.date_maturity
+                                residual = move_line.amount_residual
+                                acc_payable = move_line.credit
+                                name = move_line.move_id.name
 
-                                    if date_due:
-                                        ord_date_due = datetime.strptime(
-                                            date_due, '%Y-%m-%d').toordinal()
-                                        overdue = ord_date_due - ord_date
+                                if date_due:
+                                    ord_date_due = datetime.strptime(
+                                        date_due, '%Y-%m-%d').toordinal()
+                                    overdue = ord_date_due - ord_date
 
-                                        # NOTE
-                                        # aging1 : overdue 1-30
-                                        # aging2 : overdue 31-60
-                                        # aging3 : overdue 61-90
-                                        # aging4 : overdue >=90
+                                    # NOTE
+                                    # aging1 : overdue 1-30
+                                    # aging2 : overdue 31-60
+                                    # aging3 : overdue 61-90
+                                    # aging4 : overdue >=90
 
-                                        if overdue >= 0:
+                                    if overdue >= 0:
+                                        res = {
+                                            'name': name,
+                                            'acc_payable': acc_payable,
+                                            'current': residual,
+                                            'aging1': False,
+                                            'aging2': False,
+                                            'aging3': False,
+                                            'aging4': False
+                                        }
+                                        st_acc_payable += acc_payable
+                                        st_curr += residual
+
+                                    if overdue <= 0:
+                                        overdue = abs(overdue)
+
+                                        if overdue >= 1 and overdue <= 30:
                                             res = {
                                                 'name': name,
                                                 'acc_payable': acc_payable,
-                                                'current': residual,
-                                                'aging1': False,
+                                                'current': False,
+                                                'aging1': residual,
                                                 'aging2': False,
                                                 'aging3': False,
                                                 'aging4': False
                                             }
                                             st_acc_payable += acc_payable
-                                            st_curr += residual
+                                            st_aging1 += residual
 
-                                        if overdue <= 0:
-                                            overdue = abs(overdue)
+                                        if overdue >= 31 and overdue <= 60:
+                                            res = {
+                                                'name': name,
+                                                'acc_payable': acc_payable,
+                                                'current': False,
+                                                'aging1': False,
+                                                'aging2': residual,
+                                                'aging3': False,
+                                                'aging4': False
+                                            }
+                                            st_acc_payable += acc_payable
+                                            st_aging2 += residual
 
-                                            if overdue >= 1 and overdue <= 30:
-                                                res = {
-                                                    'name': name,
-                                                    'acc_payable': acc_payable,
-                                                    'current': False,
-                                                    'aging1': residual,
-                                                    'aging2': False,
-                                                    'aging3': False,
-                                                    'aging4': False
-                                                }
-                                                st_acc_payable += acc_payable
-                                                st_aging1 += residual
+                                        if overdue >= 61 and overdue <= 90:
+                                            res = {
+                                                'name': name,
+                                                'acc_payable': acc_payable,
+                                                'current': False,
+                                                'aging1': False,
+                                                'aging2': False,
+                                                'aging3': residual,
+                                                'aging4': False
+                                            }
+                                            st_acc_payable += acc_payable
+                                            st_aging3 += residual
 
-                                            if overdue >= 31 and overdue <= 60:
-                                                res = {
-                                                    'name': name,
-                                                    'acc_payable': acc_payable,
-                                                    'current': False,
-                                                    'aging1': False,
-                                                    'aging2': residual,
-                                                    'aging3': False,
-                                                    'aging4': False
-                                                }
-                                                st_acc_payable += acc_payable
-                                                st_aging2 += residual
-
-                                            if overdue >= 61 and overdue <= 90:
-                                                res = {
-                                                    'name': name,
-                                                    'acc_payable': acc_payable,
-                                                    'current': False,
-                                                    'aging1': False,
-                                                    'aging2': False,
-                                                    'aging3': residual,
-                                                    'aging4': False
-                                                }
-                                                st_acc_payable += acc_payable
-                                                st_aging3 += residual
-
-                                            if overdue >= 90:
-                                                res = {
-                                                    'name': name,
-                                                    'acc_payable': acc_payable,
-                                                    'current': False,
-                                                    'aging1': False,
-                                                    'aging2': False,
-                                                    'aging3': False,
-                                                    'aging4': residual
-                                                }
-                                                st_acc_payable += acc_payable
-                                                st_aging4 += residual
-                                        dict_supplier['lines'].append(res)
+                                        if overdue >= 90:
+                                            res = {
+                                                'name': name,
+                                                'acc_payable': acc_payable,
+                                                'current': False,
+                                                'aging1': False,
+                                                'aging2': False,
+                                                'aging3': False,
+                                                'aging4': residual
+                                            }
+                                            st_acc_payable += acc_payable
+                                            st_aging4 += residual
+                                    dict_supplier['lines'].append(res)
 
                 dict_supplier['st_acc_payable'] = st_acc_payable
                 dict_supplier['st_curr'] = st_curr
