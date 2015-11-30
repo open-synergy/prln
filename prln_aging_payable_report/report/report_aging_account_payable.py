@@ -141,6 +141,25 @@ class Parser(report_sxw.rml_parse):
 
         return line_supplier_ids
 
+    def get_residual(self, move_line_ids, date_as_of):
+        residual = 0.0
+        obj_move_line = self.pool.get('account.move.line')
+
+        move_line = obj_move_line.browse(
+            self.cr, self.uid, move_line_ids
+        )[0]
+
+        partial_ids = move_line.reconcile_partial_id.line_partial_ids
+
+        if move_line.reconcile_partial_id:
+            for payment_line in partial_ids:
+                if payment_line.date <= date_as_of:
+                    residual += (payment_line.debit - payment_line.credit)
+        else:
+            residual = move_line.amount_residual
+
+        return abs(residual)
+
     def lines(self):
         data_form = self.localcontext['data']['form']
         date_from = data_form['invoice_date_from']
@@ -231,21 +250,22 @@ class Parser(report_sxw.rml_parse):
                                 ('account_id.type', '=', 'payable')
                             ]
 
-                            ctx = {}
-                            ctx['date'] = date_as_of
-
                             move_line_ids = obj_move_line.search(
                                 self.cr, self.uid, move_line, order='name asc'
                             )
 
                             if move_line_ids:
-
                                 move_line = obj_move_line.browse(
-                                    self.cr, self.uid, move_line_ids, ctx
+                                    self.cr, self.uid, move_line_ids
                                 )[0]
 
+                                if move_line.reconcile_id:
+                                    continue
+
                                 date_due = move_line.date_maturity
-                                residual = move_line.amount_residual
+                                residual = self.get_residual(
+                                    move_line_ids, date_as_of
+                                )
                                 acc_payable = move_line.credit
                                 name = move_line.move_id.name
 

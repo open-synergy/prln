@@ -38,9 +38,16 @@ Creates a aging payable account report for accountants based using aeroo
     - Invoice Date To
     - Output Format(PDF/XLS)
 
+* Menu
+    - Accounting -> Reporting -> Daftar Aging Account Payable 
+
     """,
     'website': 'http://opensynergy-indonesia.com',
-    'data': ['wizards/aging_account_payable.xml', 'report/report.xml'],
+    'data': [
+        'wizards/aging_account_payable.xml',
+        'report/report.xml',
+        'menu_Accounting.xml'
+    ],
     'demo': [],
     'installable': True,
     'auto_install': False,
