@@ -230,9 +230,9 @@ class Parser(report_sxw.rml_parse):
                                 ('credit', '>', 0),
                                 ('account_id.type', '=', 'payable')
                             ]
-                            
+
                             ctx = {}
-                            ctx['date'] =  date_as_of
+                            ctx['date'] = date_as_of
 
                             move_line_ids = obj_move_line.search(
                                 self.cr, self.uid, move_line, order='name asc'
