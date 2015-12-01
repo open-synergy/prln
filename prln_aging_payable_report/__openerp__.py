@@ -39,7 +39,7 @@ Creates a aging payable account report for accountants based using aeroo
     - Output Format(PDF/XLS)
 
 * Menu
-    - Accounting -> Reporting -> Daftar Aging Account Payable 
+    - Accounting->Reporting->Daftar Aging Account Payable
 
     """,
     'website': 'http://opensynergy-indonesia.com',
