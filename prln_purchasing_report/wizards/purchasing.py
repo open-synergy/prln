@@ -20,6 +20,7 @@
 ##############################################################################
 
 from osv import fields, osv
+from tools.translate import _
 
 
 class purchasing(osv.osv_memory):
@@ -74,12 +75,14 @@ class purchasing(osv.osv_memory):
 
         if po_date_from > po_date_to:
             err = 'PO Date From cannot be greater than PO Date To !'
-            raise osv.except_osv('Warning', err)
+            raise osv.except_osv(_('Warning'), _(err))
 
         if datas['form']['company_ids'] == []:
-            raise osv.except_osv('Warning', 'Companies cannot be empty !')
+            err = 'Companies cannot be empty'
+            raise osv.except_osv(_('Warning'), _(err))
+            err = 'Department cannot be empty'
         if datas['form']['department_ids'] == []:
-            raise osv.except_osv('Warning', 'Departments cannot be empty !')
+            raise osv.except_osv(_('Warning'), _(err))
 
         if datas['form']['output_format'] == 'xls':
             output_format = 'report_purchasing_xls'
@@ -88,7 +91,8 @@ class purchasing(osv.osv_memory):
         elif datas['form']['output_format'] == 'csv':
             output_format = ''
         else:
-            raise osv.except_osv('Warning', 'Output Format cannot be empty !')
+            err = 'Output Format cannot be empty'
+            raise osv.except_osv(_('Warning'), _(err))
 
         return {
             'type': 'ir.actions.report.xml',

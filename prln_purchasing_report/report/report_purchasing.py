@@ -27,12 +27,14 @@ class Parser(report_sxw.rml_parse):
 
     def __init__(self, cr, uid, name, context):
         super(Parser, self).__init__(cr, uid, name, context)
+        self.lst_lines = []
         self.localcontext.update({
             'time': time,
             'get_po_date_from': self.get_po_date_from,
             'get_po_date_to': self.get_po_date_to,
             'get_companies': self.get_companies,
             'get_department': self.get_department,
+            'get_lines': self.lines
         })
 
     def convert_date(self, date):

@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<openerp>
+  <data>
+  
+    <menuitem   
+        id="menu_report_AgingPayableReport"
+        name="Daftar Aging Account Payable"
+        parent="account.menu_finance_reporting" 
+        action="aging_account_payable_action"
+        sequence="1000"
+    />
+    
+    </data>
+</openerp>
