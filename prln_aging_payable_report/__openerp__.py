@@ -24,7 +24,12 @@
     'author': "Michael Viriyananda,OpenSynergy Indonesia",
     'license': 'AGPL-3',
     'category': 'Reporting',
-    'depends': ['account', 'report_aeroo_ooo'],
+    'depends': [
+        'account',
+        'pralon_reports',
+        'pralon_accounting_reports',
+        'report_aeroo_ooo'
+    ],
     'description': """
 Aging Payable Account Report.
 ============================

@@ -113,7 +113,8 @@ class Parser(report_sxw.rml_parse):
             for department_id in department_ids:
                 if department_id:
                     department = obj_department.browse(
-                        self.cr, self.uid, department_id)
+                        self.cr, self.uid, department_id
+                    )
                     res = {
                         'name': department.name,
                         'id': department.id
@@ -121,3 +122,6 @@ class Parser(report_sxw.rml_parse):
                     line_department_ids.append(res)
 
         return line_department_ids
+
+    def lines(self):
+        return self.lst_lines
