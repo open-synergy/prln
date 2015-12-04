@@ -15,4 +15,5 @@
 # sale-workflow https://github.com/OCA/sale-workflow branchname
 
 aeroo_reports https://github.com/open-synergy/aeroo_reports 6.1
+pralon_accounting_reports https://github.com/open-synergy/prln-prln.git
 

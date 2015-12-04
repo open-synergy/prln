@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 ##############################################################################
 #
-#    OpenERP, Open Source Management Solution
-#    Copyright (C) 2004-2010 Tiny SPRL (<http://tiny.be>).
+#    Author: Michael Viriyananda
+#    Copyright 2015 OpenSynergy Indonesia
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU Affero General Public License as
@@ -20,8 +20,7 @@
 ##############################################################################
 
 import tools
-from osv import fields,osv
-from datetime import datetime
+from osv import fields, osv
 
 
 class pralon_query_purchasing_report(osv.osv):
@@ -31,48 +30,86 @@ class pralon_query_purchasing_report(osv.osv):
     _auto = False
 
     _columns = {
-                'id' : fields.integer(string='ID'),
-                'order_id' : fields.many2one(string='Purchase', obj='purchase.order'),
-                'company_id' : fields.many2one(string='Company', obj='res.company'),
-                'pricelist_id' : fields.many2one(string='Pricelist', obj='product.pricelist'),
-                'requisition_id' : fields.many2one(string='Requisition', obj='purchase.requisition'),
-                'department_id' : fields.many2one(string='Department', obj='hr.department'),
-                'product_id' : fields.many2one(string='Product', obj='product.product'),
-                'partner_id' : fields.many2one(string='Partner', obj='res.partner'),
-                'po_qty' : fields.float(string='Po QTY'),
-                'unit_price' : fields.float(string='Price Unit'),
-                'picking_id' : fields.many2one(string='Picking', obj='stock.picking'),
-                'move_id' : fields.many2one(string='Move', obj='stock.move'),
-                'warehouse_id' : fields.many2one(string='Warehouse', obj='stock.warehouse')
-                }
+        'id': fields.integer(string='ID'),
+        'order_id': fields.many2one(
+            string='Purchase',
+            obj='purchase.order'
+        ),
+        'date_approve': fields.date(string='Date Approve'),
+        'company_id': fields.many2one(
+            string='Company',
+            obj='res.company'
+        ),
+        'pricelist_id': fields.many2one(
+            string='Pricelist',
+            obj='product.pricelist'
+        ),
+        'pricelist_name': fields.char(string='Pricelist Name', size=64),
+        'requisition_id': fields.many2one(
+            string='Requisition',
+            obj='purchase.requisition'
+        ),
+        'department_id': fields.many2one(
+            string='Department',
+            obj='hr.department'
+        ),
+        'product_id': fields.many2one(
+            string='Product',
+            obj='product.product'
+        ),
+        'partner_id': fields.many2one(
+            string='Partner',
+            obj='res.partner'
+        ),
+        'po_qty': fields.float(string='Po QTY'),
+        'unit_price': fields.float(string='Price Unit'),
+        'picking_id': fields.many2one(
+            string='Picking',
+            obj='stock.picking'
+        ),
+        'move_id': fields.many2one(
+            string='Move',
+            obj='stock.move'
+        ),
+        'warehouse_id': fields.many2one(
+            string='Warehouse',
+            obj='stock.warehouse'
+        )
+    }
 
     def init(self, cr):
         tools.drop_view_if_exists(cr, 'pralon_query_purchasing_report')
-        strSQL =    """
+        strSQL = """
                     CREATE OR REPLACE VIEW pralon_query_purchasing_report AS (
-                        SELECT	A.id AS id,
-	                            B.id AS order_id,
+                        SELECT  A.id AS id,
+                                B.id AS order_id,
+                                B.date_approve AS date_approve,
                                 B.company_id AS company_id,
-	                            B.pricelist_id AS pricelist_id,
-	                            B.requisition_id AS requisition_id,
-	                            C.department_id AS department_id,
-	                            A.product_id AS product_id,
-	                            A.partner_id AS partner_id,
-	                            A.product_qty AS po_qty,
-	                            A.price_unit AS unit_price,
-	                            E.id AS picking_id,
-	                            D.id AS move_id,
-	                            B.warehouse_id AS warehouse_id
-                        FROM 	purchase_order_line AS A
-                        JOIN	purchase_order AS B ON A.order_id=B.id
-                        JOIN	purchase_requisition AS C ON B.requisition_id=C.id
-                        JOIN	stock_move AS D ON A.id=D.purchase_line_id
-                        JOIN	stock_picking AS E ON D.picking_id=E.id
-                        WHERE   (B.state = 'done')
+                                B.pricelist_id AS pricelist_id,
+                                B1.name AS pricelist_name,
+                                B.requisition_id AS requisition_id,
+                                C.department_id AS department_id,
+                                A.product_id AS product_id,
+                                A.partner_id AS partner_id,
+                                A.product_qty AS po_qty,
+                                A.price_unit AS unit_price,
+                                E.id AS picking_id,
+                                D.id AS move_id,
+                                B.warehouse_id AS warehouse_id
+                        FROM    purchase_order_line AS A
+                        JOIN    purchase_order AS B
+                                ON A.order_id=B.id
+                        JOIN    product_pricelist AS B1
+                                ON B.pricelist_id=B1.id
+                        LEFT JOIN   purchase_requisition AS C
+                                    ON B.requisition_id=C.id
+                        LEFT JOIN   stock_move AS D
+                                    ON A.id=D.purchase_line_id
+                        LEFT JOIN   stock_picking AS E
+                                    ON A.id=E.purchase_id
+                        WHERE   (B.state not in ('draft','cancel'))
                     )
                     """
         cr.execute(strSQL)
-        
-pralon_query_purchasing_report()
 
-# vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
+pralon_query_purchasing_report()

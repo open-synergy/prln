@@ -18,40 +18,23 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 ##############################################################################
-{
-    'name': 'Pralon Purchasing Report Module',
-    'version': '1.0.0',
-    'author': "Michael Viriyananda,OpenSynergy Indonesia",
-    'license': 'AGPL-3',
-    'category': 'Reporting',
-    'depends': [
-        'purchase',
-        'purchase_requisition',
-        'pralon_purchase_enhancements',
-        'report_aeroo_ooo'
-    ],
-    'description': """
-Purchasing Report Based On Purchase Order.
-============================
 
-Creates a purchasing report for accountants based using aeroo
---------------------------------------------------
-* Wizard with parameter:
-    - Companies
-    - Departments
-    - PO Date From
-    - PO Date To
-    - Output Format(PDF/XLS/CSV)
+from osv import osv
+from osv import fields
 
-    """,
-    'website': 'http://opensynergy-indonesia.com',
-    'data': [
-        'wizards/purchasing.xml',
-        'view/view_ResCompany.xml',
-        'report/report.xml'
-    ],
-    'demo': [],
-    'installable': True,
-    'auto_install': False,
-    'application': True
-}
+
+class res_company(osv.osv):
+    _name = 'res.company'
+    _inherit = 'res.company'
+
+    _columns = {
+        'tax_ids': fields.many2many(
+            string='Taxes',
+            obj='account.tax',
+            rel='company_account_tax_rel',
+            id1='company_id',
+            id2='tax_id',
+        ),
+    }
+
+res_company()

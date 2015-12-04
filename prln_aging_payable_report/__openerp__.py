@@ -26,7 +26,6 @@
     'category': 'Reporting',
     'depends': [
         'account',
-        'pralon_reports',
         'pralon_accounting_reports',
         'report_aeroo_ooo'
     ],
