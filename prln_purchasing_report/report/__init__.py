@@ -21,4 +21,3 @@
 
 from . import query_purchasing_report
 from . import report_purchasing
-
