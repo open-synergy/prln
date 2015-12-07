@@ -91,13 +91,6 @@ class aging_account_payable(osv.osv_memory):
             err = 'Invoice Date From cannot be greater than Invoice Date To'
             raise osv.except_osv(_('Warning'), _(err))
 
-        if datas['form']['company_ids'] == []:
-            err = 'Companies cannot be empty'
-            raise osv.except_osv(_('Warning'), _(err))
-        if datas['form']['supplier_ids'] == []:
-            err = 'Supplier cannot be empty'
-            raise osv.except_osv(_('Warning'), _(err))
-
         if datas['form']['output_format'] == 'xls':
             output_format = 'report_aging_account_payable_xls'
         elif datas['form']['output_format'] == 'pdf':

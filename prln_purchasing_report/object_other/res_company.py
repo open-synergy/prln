@@ -2,7 +2,7 @@
 ##############################################################################
 #
 #    Author: Michael Viriyananda
-#    Copyright 2015 Opensynergy Indonesia
+#    Copyright 2015 OpenSynergy Indonesia
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU Affero General Public License as
@@ -19,5 +19,22 @@
 #
 ##############################################################################
 
-from . import query_purchasing_report
-from . import report_purchasing
+from osv import osv
+from osv import fields
+
+
+class res_company(osv.osv):
+    _name = 'res.company'
+    _inherit = 'res.company'
+
+    _columns = {
+        'tax_ids': fields.many2many(
+            string='Taxes',
+            obj='account.tax',
+            rel='company_account_tax_rel',
+            id1='company_id',
+            id2='tax_id',
+        ),
+    }
+
+res_company()

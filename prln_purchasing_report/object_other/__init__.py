@@ -2,7 +2,7 @@
 ##############################################################################
 #
 #    Author: Michael Viriyananda
-#    Copyright 2015 Opensynergy Indonesia
+#    Copyright 2015 OpenSynergy Indonesia
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU Affero General Public License as
@@ -19,5 +19,4 @@
 #
 ##############################################################################
 
-from . import query_purchasing_report
-from . import report_purchasing
+from . import res_company

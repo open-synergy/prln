@@ -5,7 +5,7 @@
     <menuitem   
         id="menu_report_AgingPayableReport"
         name="Daftar Aging Account Payable"
-        parent="account.menu_finance_reporting" 
+        parent="pralon_accounting_reports.menu_pralon_reporting_accounting_root" 
         action="aging_account_payable_action"
         sequence="1000"
     />

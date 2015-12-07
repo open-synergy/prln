@@ -103,7 +103,12 @@ class Parser(report_sxw.rml_parse):
 
         if data_company_ids:
             kriteria = [('id', '=', data_company_ids)]
-            company_ids = obj_company.search(self.cr, self.uid, kriteria)
+        else:
+            kriteria = []
+
+        company_ids = obj_company.search(self.cr, self.uid, kriteria)
+
+        if company_ids:
             for company_id in company_ids:
                 if company_id:
                     company = obj_company.browse(self.cr, self.uid, company_id)
@@ -127,7 +132,12 @@ class Parser(report_sxw.rml_parse):
 
         if data_supplier_ids:
             kriteria = [('id', '=', data_supplier_ids)]
-            supplier_ids = obj_supplier.search(self.cr, self.uid, kriteria)
+        else:
+            kriteria = []
+
+        supplier_ids = obj_supplier.search(self.cr, self.uid, kriteria)
+
+        if supplier_ids:
             for supplier_id in supplier_ids:
                 if supplier_id:
                     supp = obj_supplier.browse(self.cr, self.uid, supplier_id)
@@ -188,19 +198,13 @@ class Parser(report_sxw.rml_parse):
 
             # GET LIST SUPPLIERS
             for supplier in self.get_supplier():
+                res_line = []
                 st_acc_payable = 0.0
                 st_curr = 0.0
                 st_aging1 = 0.0
                 st_aging2 = 0.0
                 st_aging3 = 0.0
                 st_aging4 = 0.0
-
-                dict_supplier = {
-                    'no': supplier['no'],
-                    'supplier_id': supplier['id'],
-                    'supplier_name': supplier['name'],
-                    'lines': []
-                }
 
                 # GET LINES
 
@@ -347,23 +351,31 @@ class Parser(report_sxw.rml_parse):
                                             }
                                             st_acc_payable += acc_payable
                                             st_aging4 += residual
-                                    dict_supplier['lines'].append(res)
+                                    res_line.append(res)
 
-                dict_supplier['st_acc_payable'] = st_acc_payable
-                dict_supplier['st_curr'] = st_curr
-                dict_supplier['st_aging1'] = st_aging1
-                dict_supplier['st_aging2'] = st_aging2
-                dict_supplier['st_aging3'] = st_aging3
-                dict_supplier['st_aging4'] = st_aging4
+                    if res_line:
+                        dict_supplier = {
+                            'no': supplier['no'],
+                            'supplier_id': supplier['id'],
+                            'supplier_name': supplier['name'],
+                            'lines': res_line
+                        }
 
-                dict_companies['supplier_ids'].append(dict_supplier)
+                        dict_supplier['st_acc_payable'] = st_acc_payable
+                        dict_supplier['st_curr'] = st_curr
+                        dict_supplier['st_aging1'] = st_aging1
+                        dict_supplier['st_aging2'] = st_aging2
+                        dict_supplier['st_aging3'] = st_aging3
+                        dict_supplier['st_aging4'] = st_aging4
 
-                t_acc_payable += st_acc_payable
-                t_curr += st_curr
-                t_aging1 += st_aging1
-                t_aging2 += st_aging2
-                t_aging3 += st_aging3
-                t_aging4 += st_aging4
+                        dict_companies['supplier_ids'].append(dict_supplier)
+
+                    t_acc_payable += st_acc_payable
+                    t_curr += st_curr
+                    t_aging1 += st_aging1
+                    t_aging2 += st_aging2
+                    t_aging3 += st_aging3
+                    t_aging4 += st_aging4
 
             dict_companies['t_acc_payable'] = t_acc_payable
             dict_companies['t_curr'] = t_curr

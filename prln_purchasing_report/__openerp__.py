@@ -24,7 +24,12 @@
     'author': "Michael Viriyananda,OpenSynergy Indonesia",
     'license': 'AGPL-3',
     'category': 'Reporting',
-    'depends': ['purchase', 'hr', 'report_aeroo_ooo'],
+    'depends': [
+        'purchase',
+        'purchase_requisition',
+        'pralon_purchase_enhancements',
+        'report_aeroo_ooo'
+    ],
     'description': """
 Purchasing Report Based On Purchase Order.
 ============================
@@ -40,7 +45,11 @@ Creates a purchasing report for accountants based using aeroo
 
     """,
     'website': 'http://opensynergy-indonesia.com',
-    'data': ['wizards/purchasing.xml', 'report/report.xml'],
+    'data': [
+        'wizards/purchasing.xml',
+        'view/view_ResCompany.xml',
+        'report/report.xml'
+    ],
     'demo': [],
     'installable': True,
     'auto_install': False,
