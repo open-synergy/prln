@@ -55,8 +55,7 @@ class purchasing(osv.osv_memory):
             required=True,
             selection=[
                 ('pdf', 'PDF'),
-                ('xls', 'XLS'),
-                ('csv', 'CSV')
+                ('xls', 'XLS')
             ]
         )
     }
@@ -77,19 +76,10 @@ class purchasing(osv.osv_memory):
             err = 'PO Date From cannot be greater than PO Date To !'
             raise osv.except_osv(_('Warning'), _(err))
 
-        if datas['form']['company_ids'] == []:
-            err = 'Companies cannot be empty'
-            raise osv.except_osv(_('Warning'), _(err))
-            err = 'Department cannot be empty'
-        if datas['form']['department_ids'] == []:
-            raise osv.except_osv(_('Warning'), _(err))
-
         if datas['form']['output_format'] == 'xls':
             output_format = 'report_purchasing_xls'
         elif datas['form']['output_format'] == 'pdf':
             output_format = 'report_purchasing_pdf'
-        elif datas['form']['output_format'] == 'csv':
-            output_format = ''
         else:
             err = 'Output Format cannot be empty'
             raise osv.except_osv(_('Warning'), _(err))

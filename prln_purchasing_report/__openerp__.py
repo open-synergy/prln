@@ -28,7 +28,8 @@
         'purchase',
         'purchase_requisition',
         'pralon_purchase_enhancements',
-        'report_aeroo_ooo'
+        'report_aeroo_ooo',
+        'pralon_accounting_reports'
     ],
     'description': """
 Purchasing Report Based On Purchase Order.
@@ -46,9 +47,11 @@ Creates a purchasing report for accountants based using aeroo
     """,
     'website': 'http://opensynergy-indonesia.com',
     'data': [
+        'security/ir.model.access.csv',
         'wizards/purchasing.xml',
         'view/view_ResCompany.xml',
-        'report/report.xml'
+        'report/report.xml',
+        'menu_Accounting.xml'
     ],
     'demo': [],
     'installable': True,

@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<openerp>
+  <data>
+  
+    <menuitem   
+        id="menu_report_PurchasingReport"
+        name="Purchasing Report Based On PO"
+        parent="pralon_accounting_reports.menu_pralon_reporting_accounting_root" 
+        action="purchasing_action"
+        sequence="1001"
+    />
+    
+    </data>
+</openerp>

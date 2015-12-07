@@ -31,6 +31,10 @@ class pralon_query_purchasing_report(osv.osv):
 
     _columns = {
         'id': fields.integer(string='ID'),
+        'line_id': fields.many2one(
+            string='Purchase Line',
+            obj='purchase.order.line'
+        ),
         'order_id': fields.many2one(
             string='Purchase',
             obj='purchase.order'
@@ -71,6 +75,7 @@ class pralon_query_purchasing_report(osv.osv):
             string='Move',
             obj='stock.move'
         ),
+        'is_qty': fields.float(string='Is QTY'),
         'warehouse_id': fields.many2one(
             string='Warehouse',
             obj='stock.warehouse'
@@ -81,7 +86,8 @@ class pralon_query_purchasing_report(osv.osv):
         tools.drop_view_if_exists(cr, 'pralon_query_purchasing_report')
         strSQL = """
                     CREATE OR REPLACE VIEW pralon_query_purchasing_report AS (
-                        SELECT  A.id AS id,
+                        SELECT  row_number() OVER() AS id,
+                                A.id AS line_id,
                                 B.id AS order_id,
                                 B.date_approve AS date_approve,
                                 B.company_id AS company_id,
@@ -95,18 +101,26 @@ class pralon_query_purchasing_report(osv.osv):
                                 A.price_unit AS unit_price,
                                 E.id AS picking_id,
                                 D.id AS move_id,
+                                D.product_qty AS is_qty,
                                 B.warehouse_id AS warehouse_id
                         FROM    purchase_order_line AS A
                         JOIN    purchase_order AS B
                                 ON A.order_id=B.id
                         JOIN    product_pricelist AS B1
                                 ON B.pricelist_id=B1.id
-                        LEFT JOIN   purchase_requisition AS C
+                        JOIN   purchase_requisition AS C
                                     ON B.requisition_id=C.id
-                        LEFT JOIN   stock_move AS D
-                                    ON A.id=D.purchase_line_id
+                        LEFT JOIN   (
+                                    SELECT  D1.purchase_line_id,
+                                        D1.picking_id,
+                                        D1.id,
+                                        D1.product_qty
+                                    FROM    stock_move D1
+                                    WHERE   D1.picking_id IS NOT NULL AND
+                                        D1.state = 'done'
+                                )AS D ON A.id = D.purchase_line_id
                         LEFT JOIN   stock_picking AS E
-                                    ON A.id=E.purchase_id
+                                    ON D.picking_id=E.id
                         WHERE   (B.state not in ('draft','cancel'))
                     )
                     """
