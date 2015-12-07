@@ -1,0 +1,3 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_pralon_purchasing,Purchasing Report,model_pralon_purchasing,,1,1,1,1
+access_pralon_query_purchasing,Query Purchasing Report,model_pralon_query_purchasing_report,,1,1,1,1

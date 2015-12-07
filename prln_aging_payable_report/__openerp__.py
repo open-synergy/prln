@@ -48,6 +48,7 @@ Creates a aging payable account report for accountants based using aeroo
     """,
     'website': 'http://opensynergy-indonesia.com',
     'data': [
+        'security/ir.model.access.csv',
         'wizards/aging_account_payable.xml',
         'report/report.xml',
         'menu_Accounting.xml'
