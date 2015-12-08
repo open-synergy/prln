@@ -27,7 +27,7 @@
         <record id="waction_pralon_formEfakturExport" model="ir.actions.act_window.view">
             <field eval="1" name="sequence"/>
             <field name="view_mode">form</field>
-            <field name="act_window_id" ref="waction_pralon_formEfakturExport"/>
+            <field name="act_window_id" ref="waction_pralon_efakturExport"/>
             <field name="view_id" ref="form_pralon_wzdEfakturExport"/>
         </record>
         
