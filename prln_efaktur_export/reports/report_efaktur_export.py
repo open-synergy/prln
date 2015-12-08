@@ -25,4 +25,22 @@ class Parser(report_sxw.rml_parse):
 
     def __init__(self, cr, uid, name, context):
         super(Parser, self).__init__(cr, uid, name, context)
-        self.localcontext.update({})
+        self.lines = []
+        self.localcontext.update({'get_lines':self.get_lines})
+
+    def get_lines(self):
+        pool = self.pool
+        cr = self.cr
+        uid = self.uid
+        obj_taxform = pool.get('account.taxform')
+        taxform_ids = self.localcontext.get('active_ids')
+        if not taxform_ids:
+            return self.lines
+
+        for o in obj_taxform.browse(cr, uid, taxform_ids):
+            data = {
+                'taxform_id': o.taxform_id,
+                }
+
+            self.lines.append(data)
+        return self.lines
