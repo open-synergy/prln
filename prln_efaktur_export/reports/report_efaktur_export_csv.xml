@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<openerp>
+    <data>
+        <record id="report_pralon_efakturExport_csv" model="ir.actions.report.xml">
+            <field name="name">eFaktur Export CSV</field>
+            <field name="type">ir.actions.report.xml</field>
+            <field name="model">account.taxform</field>
+            <field name="report_name">report_pralon_efakturExport_csv</field>
+            <field name="report_type">aeroo</field>
+            <field name="in_format">oo-ods</field>
+            <field name="out_format" ref="report_aeroo.report_mimetypes_ods_ods"/>
+            <field name="parser_loc">prln_efaktur_export/report/report_efaktur_export.py</field>
+            <field name="report_rml">prln_efaktur_export/report/report_efaktur_export.ods</field>
+            <field name="parser_state">loc</field>
+            <field name="tml_source">file</field>
+        </record>    
+    </data>
+</openerp>
+

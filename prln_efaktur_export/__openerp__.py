@@ -34,6 +34,7 @@
     'website': 'http://opensynergy-indonesia.com',
     'data': [
         'wizards/wzd_efaktur_export.xml',
+        'reports/report_efaktur_export_csv.xml',
     ],
     'demo': [],
     'installable': True,

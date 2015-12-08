@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 ##############################################################################
 #
-#    Author: Michael Viriyananda
-#    Copyright 2015 Opensynergy Indonesia
+#    Author: Andhitia Rama
+#    Copyright 2015 OpenSynergy Indonesia
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU Affero General Public License as
@@ -18,5 +18,12 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 ##############################################################################
+from report import report_sxw
 
-from . import report_efaktur_export
+
+class Parser(report_sxw.rml_parse):
+
+    def __init__(self, cr, uid, name, context):
+        super(Parser, self).__init__(cr, uid, name, context)
+        self.localcontext.update({})
+
