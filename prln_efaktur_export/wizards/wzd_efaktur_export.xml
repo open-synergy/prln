@@ -31,5 +31,13 @@
             <field name="view_id" ref="form_pralon_wzdEfakturExport"/>
         </record>
         
+        <record id="actBinding_pralon_wzdEfakturExport" model="ir.values">
+            <field name="model_id" ref="via_account_taxform.model_account_taxform" />
+            <field name="name">Export to eFaktur</field>
+            <field name="key2">client_action_multi</field>
+            <field name="value" eval="'ir.actions.act_window,' + str(ref('waction_pralon_efakturExport'))" />
+            <field name="key">action</field>
+            <field name="model">account.taxform</field>
+        </record>
     </data>
 </openerp>
