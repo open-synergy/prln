@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>  
+
+        <record id="form_pralon_wzdEfakturExport" model="ir.ui.view">
+            <field name="name">Export to eFaktur</field>
+            <field name="model">pralon.wzd_efaktur_export</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml" >
+                <form string="Export to eFaktur">
+                    <group col="2" colspan="4">
+                        <button icon="gtk-cancel" special="cancel" string="Cancel" type="object"/>
+                        <button name="button_print_report" string="Print" colspan="1" type="object" icon="gtk-apply"/>
+                    </group>
+                </form>
+            </field>
+        </record>
+        
+        <record id="waction_pralon_efakturExport" model="ir.actions.act_window">
+            <field name="name">Export to eFaktur</field>
+            <field name="res_model">pralon.wzd_efaktur_export</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>          
+        
+        <record id="waction_pralon_formEfakturExport" model="ir.actions.act_window.view">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="act_window_id" ref="waction_pralon_formEfakturExport"/>
+            <field name="view_id" ref="form_pralon_wzdEfakturExport"/>
+        </record>
+        
+    </data>
+</openerp>
