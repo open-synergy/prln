@@ -122,7 +122,6 @@ class Parser(report_sxw.rml_parse):
 
     def get_supplier(self):
         line_supplier_ids = []
-        no = 1
 
         obj_supplier = self.pool.get('res.partner')
 
@@ -142,12 +141,10 @@ class Parser(report_sxw.rml_parse):
                 if supplier_id:
                     supp = obj_supplier.browse(self.cr, self.uid, supplier_id)
                     res = {
-                        'no': no,
                         'name': supp.name,
                         'id': supp.id
                     }
                     line_supplier_ids.append(res)
-                    no += 1
 
         return line_supplier_ids
 
@@ -171,6 +168,7 @@ class Parser(report_sxw.rml_parse):
         return abs(residual)
 
     def lines(self):
+        no = 1
         data_form = self.localcontext['data']['form']
         date_from = data_form['invoice_date_from']
         date_to = data_form['invoice_date_to']
@@ -355,11 +353,12 @@ class Parser(report_sxw.rml_parse):
 
                     if res_line:
                         dict_supplier = {
-                            'no': supplier['no'],
+                            'no': no,
                             'supplier_id': supplier['id'],
                             'supplier_name': supplier['name'],
                             'lines': res_line
                         }
+                        no += 1
 
                         dict_supplier['st_acc_payable'] = st_acc_payable
                         dict_supplier['st_curr'] = st_curr
