@@ -29,10 +29,14 @@ class wzd_efaktur_export(osv.osv_memory):
     def button_print_report(self, cr, uid, ids, data, context=None):
         datas = {}
 
+        if context is None:
+            context = {}
+
+        datas['form'] = self.read(cr, uid, ids)[0]
+
         return {
             'type': 'ir.actions.report.xml',
-            'report_name': 'rpt_prln_efaktur_export_csv',
+            'report_name': 'report_pralon_efakturExport_csv',
             'datas': datas,
         }
-
 wzd_efaktur_export()
