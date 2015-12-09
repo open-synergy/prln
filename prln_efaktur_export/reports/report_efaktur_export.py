@@ -37,7 +37,7 @@ class Parser(report_sxw.rml_parse):
         cr = self.cr
         uid = self.uid
         obj_taxform = pool.get('account.taxform')
-        taxform_ids = self.localcontext.get('active_ids')
+        taxform_ids = self.localcontext.get('taxform_ids')
         if not taxform_ids:
             return self.lines
 
