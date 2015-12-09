@@ -43,13 +43,20 @@ class Parser(report_sxw.rml_parse):
             return self.lines
 
         for o in obj_taxform.browse(cr, uid, taxform_ids):
+            dt_masa_pajak = datetime.strptime(o.invoice_date, '%Y-%m-%d')
+            masa_pajak = dt_masa_pajak.strftime('%m')
+            dt_tahun_pajak = datetime.strptime(o.invoice_date, '%Y-%m-%d')
+            tahun_pajak = dt_tahun_pajak.strftime('%Y')
+            dt_tanggal_pajak = datetime.strptime(o.invoice_date, '%Y-%m-%d')
+            tanggal_pajak = dt_tanggal_pajak.strftime('%d/%m/%Y')
+
             data = {
                 'taxform_id': o.taxform_id,
                 'company_name': o.company_id.name,
                 'company_npwp': o.company_npwp,
-                'masa_pajak': datetime.strptime(o.invoice_date, '%Y-%m-%d').strftime('%m'),
-                'tahun_pajak': datetime.strptime(o.invoice_date, '%Y-%m-%d').strftime('%Y'),
-                'tanggal_faktur': datetime.strptime(o.invoice_date, '%Y-%m-%d').strftime('%d/%m/%Y'),
+                'masa_pajak': masa_pajak,
+                'tahun_pajak': tahun_pajak,
+                'tanggal_faktur': tanggal_pajak,
                 'alamat_lengkap': o.company_id.partner_id.street,
                 'jumlah_dpp': o.amount_base,
                 'jumlah_ppn': o.amount_tax,
