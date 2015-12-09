@@ -19,6 +19,7 @@
 #
 ##############################################################################
 from report import report_sxw
+from datetime import datetime
 
 
 class Parser(report_sxw.rml_parse):
@@ -46,7 +47,25 @@ class Parser(report_sxw.rml_parse):
                 'taxform_id': o.taxform_id,
                 'company_name': o.company_id.name,
                 'company_npwp': o.company_npwp,
+                'masa_pajak': datetime.strptime(o.invoice_date, '%Y-%m-%d').strftime('%m'),
+                'tahun_pajak': datetime.strptime(o.invoice_date, '%Y-%m-%d').strftime('%Y'),
+                'tanggal_faktur': datetime.strptime(o.invoice_date, '%Y-%m-%d').strftime('%d/%m/%Y'),
+                'alamat_lengkap': o.company_id.partner_id.street,
+                'jumlah_dpp': o.amount_base,
+                'jumlah_ppn': o.amount_tax,
+                'jumlah_ppnbm': o.amount_total_ppnbm,
+                'details': [],
                 }
+            if o.taxform_line:
+                for detail in o.taxform_line:
+                    data1 = {
+                        'product_code': detail.product_id.default_code,
+                        'product_name': detail.name,
+                        'price_unit': detail.price_unit,
+                        'qty': detail.quantity,
+                        'amount_untaxed': detail.price_unit * detail.quantity,
+                        }
+                    data['details'].append(data1)
 
             self.lines.append(data)
         return self.lines
