@@ -61,16 +61,34 @@ class Parser(report_sxw.rml_parse):
                 'jumlah_dpp': o.amount_base,
                 'jumlah_ppn': o.amount_tax,
                 'jumlah_ppnbm': o.amount_total_ppnbm,
-                'details': [],
+                'referensi': o.invoice_id.number,
+                'details_lt': [],
                 }
+
             if o.taxform_line:
                 for detail in o.taxform_line:
+                    amount_untaxed = detail.amount_untaxed
+
+                    if detail.discount:
+                        discount = detail.discount
+                    else:
+                        discount = 0
+
+                    amount_discount = amount_untaxed * (discount / 100.0)
+                    dpp = amount_untaxed - amount_discount
+                    ppn = dpp * 0.1
+
                     data1 = {
                         'product_code': detail.product_id.default_code,
                         'product_name': detail.name,
                         'price_unit': detail.price_unit,
                         'qty': detail.quantity,
-                        'amount_untaxed': detail.price_unit * detail.quantity,
+                        'amount_untaxed': amount_untaxed,
+                        'discount': discount,
+                        'dpp': dpp,
+                        'ppn': ppn,
+                        'tarif_ppnbm': 0,
+                        'ppnbm': 0
                         }
                     data['details'].append(data1)
 
