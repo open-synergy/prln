@@ -33,7 +33,7 @@ class wzd_efaktur_export(osv.osv_memory):
             context = {}
 
         datas['form'] = self.read(cr, uid, ids)[0]
-        datas['context']['taxform_ids'] = context.get('active_ids', [])
+        datas['form'].update({'taxform_ids':  context.get('active_ids', [])})
 
         return {
             'type': 'ir.actions.report.xml',
