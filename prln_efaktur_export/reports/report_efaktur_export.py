@@ -44,7 +44,7 @@ class Parser(report_sxw.rml_parse):
         for o in obj_taxform.browse(cr, uid, taxform_ids):
             data = {
                 'taxform_id': o.taxform_id,
-                'company_name': o.company_name,
+                'company_name': o.company_id.name,
                 'company_npwp': o.company_npwp,
                 }
 
