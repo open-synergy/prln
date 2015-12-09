@@ -26,7 +26,7 @@ class wzd_efaktur_export(osv.osv_memory):
     _name = 'pralon.wzd_efaktur_export'
     _description = 'Export To eFaktur'
 
-    def button_print_report(self, cr, uid, ids, data, context=None):
+    def button_print_report(self, cr, uid, ids, context=None):
         datas = {}
 
         if context is None:
