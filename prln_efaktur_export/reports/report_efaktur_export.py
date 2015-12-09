@@ -50,6 +50,10 @@ class Parser(report_sxw.rml_parse):
             dt_tanggal_pajak = datetime.strptime(o.invoice_date, '%Y-%m-%d')
             tanggal_pajak = dt_tanggal_pajak.strftime('%d/%m/%Y')
 
+            partner_address = o.partner_address_id.street
+            partner_zip = o.partner_address_id.zip
+            partner_phone = o.partner_address_id.phone
+
             data = {
                 'taxform_id': o.taxform_id,
                 'company_name': o.company_id.name,
@@ -62,6 +66,11 @@ class Parser(report_sxw.rml_parse):
                 'jumlah_ppn': o.amount_tax,
                 'jumlah_ppnbm': o.amount_total_ppnbm,
                 'referensi': o.invoice_id.number,
+                'partner_npwp': o.partner_npwp.value or '-',
+                'partner_name': o.partner_id or '-',
+                'partner_street':  partner_address or '-',
+                'partner_zip': partner_zip or '-',
+                'partner_phone': partner_phone or '-',
                 'details_lt': [],
                 }
 
