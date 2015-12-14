@@ -61,7 +61,7 @@ class Parser(report_sxw.rml_parse):
                 'masa_pajak': masa_pajak,
                 'tahun_pajak': tahun_pajak,
                 'tanggal_faktur': tanggal_pajak,
-                'alamat_lengkap': o.company_id.partner_id.street,
+                'alamat_lengkap': o.company_address_id.street,
                 'jumlah_dpp': o.amount_base,
                 'jumlah_ppn': o.amount_tax,
                 'jumlah_ppnbm': o.amount_total_ppnbm,
