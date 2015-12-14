@@ -99,7 +99,7 @@ class Parser(report_sxw.rml_parse):
                         'tarif_ppnbm': 0,
                         'ppnbm': 0
                         }
-                    data['details'].append(data1)
+                    data['details_lt'].append(data1)
 
             self.lines.append(data)
         return self.lines
