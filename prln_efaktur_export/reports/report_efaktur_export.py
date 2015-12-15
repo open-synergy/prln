@@ -54,9 +54,8 @@ class Parser(report_sxw.rml_parse):
             partner_zip = o.partner_address_id.zip
             partner_phone = o.partner_address_id.phone
             taxform_id = '%s%s%s' % (o.trx_code, tahun_pajak, o.taxform_id)
-            partner_npwp = o.partner_npwp.value.replace("-","")
-            partner_npwp = partner_npwp.replate(".","")
-
+            partner_npwp = o.partner_npwp.value.replace("-", "")
+            partner_npwp = partner_npwp.replace(".", "")
 
             data = {
                 'taxform_id': taxform_id,
