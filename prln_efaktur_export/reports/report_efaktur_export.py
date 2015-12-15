@@ -20,7 +20,7 @@
 ##############################################################################
 from report import report_sxw
 from datetime import datetime
-from decimal import Decimal, ROUND_DOWN, ROUND_05UP
+from decimal import Decimal, ROUND_DOWN, ROUND_05UP, ROUND_UP
 
 
 class Parser(report_sxw.rml_parse):
@@ -114,6 +114,7 @@ class Parser(report_sxw.rml_parse):
                         }
                     data['details_lt'].append(data1)
                 data['jumlah_ppn'] = Decimal(0.1) * data['jumlah_dpp']
+                data['jumlah_ppn'] = Decimal(data['jumlah_ppn'].quantize(Decimal('1.'), rounding=ROUND_UP))
 
             self.lines.append(data)
         return self.lines
