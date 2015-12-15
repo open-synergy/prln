@@ -83,7 +83,7 @@ class Parser(report_sxw.rml_parse):
                     price_before_disc = detail.price_subtotal * \
                             (100.00 / (100.00 - detail.discount))
                     price_unit = price_before_disc / detail.quantity
-                    amount_untaxed = price_unit * detail.qty
+                    amount_untaxed = price_unit * detail.quantity
 
                     if detail.discount:
                         discount = detail.discount
