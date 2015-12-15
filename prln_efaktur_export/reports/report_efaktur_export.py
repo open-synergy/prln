@@ -67,7 +67,7 @@ class Parser(report_sxw.rml_parse):
                 'tanggal_faktur': tanggal_pajak,
                 'alamat_lengkap': o.company_address_id.street,
                 'jumlah_dpp': Decimal(0.0),
-                'jumlah_ppn': Decimal(0.0),
+                'jumlah_ppn': Decimal(o.amount_tax),
                 'jumlah_ppnbm': 0.0,
                 'referensi': o.invoice_id.number,
                 'partner_npwp': partner_npwp,
@@ -113,8 +113,8 @@ class Parser(report_sxw.rml_parse):
                         'ppnbm': 0
                         }
                     data['details_lt'].append(data1)
-                data['jumlah_ppn'] = Decimal(0.1) * data['jumlah_dpp']
-                data['jumlah_ppn'] = Decimal(data['jumlah_ppn'].quantize(Decimal('1.'), rounding=ROUND_05UP))
+                # data['jumlah_ppn'] = Decimal(0.1) * data['jumlah_dpp']
+                # data['jumlah_ppn'] = Decimal(data['jumlah_ppn'].quantize(Decimal('1.'), rounding=ROUND_UP))
 
             self.lines.append(data)
         return self.lines
