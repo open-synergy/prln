@@ -65,9 +65,9 @@ class Parser(report_sxw.rml_parse):
                 'tahun_pajak': tahun_pajak,
                 'tanggal_faktur': tanggal_pajak,
                 'alamat_lengkap': o.company_address_id.street,
-                'jumlah_dpp': o.amount_base,
-                'jumlah_ppn': o.amount_tax,
-                'jumlah_ppnbm': o.amount_total_ppnbm,
+                'jumlah_dpp': 0.0,
+                'jumlah_ppn': 0.0,
+                'jumlah_ppnbm': 0.0,
                 'referensi': o.invoice_id.number,
                 'partner_npwp': partner_npwp,
                 'partner_name': o.partner_id or '-',
@@ -79,8 +79,11 @@ class Parser(report_sxw.rml_parse):
 
             if o.taxform_line:
                 for detail in o.taxform_line:
-                    price_unit = detail.price_subtotal / detail.quantity
-                    amount_untaxed = price_unit
+                    data['jumlah_dpp'] += detail.price_subtotal
+                    price_before_disc = detail.price_subtotal * \
+                            (100.00 / (100.00 - detail.discount))
+                    price_unit = price_before_disc / detail.quantity
+                    amount_untaxed = price_unit * detail.qty
 
                     if detail.discount:
                         discount = detail.discount
@@ -105,6 +108,7 @@ class Parser(report_sxw.rml_parse):
                         'ppnbm': 0
                         }
                     data['details_lt'].append(data1)
+                data['jumlah_ppn'] = 0.1 * data['jumlah_dpp']
 
             self.lines.append(data)
         return self.lines
