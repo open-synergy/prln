@@ -94,7 +94,7 @@ class Parser(report_sxw.rml_parse):
 
                     data1 = {
                         'product_code': detail.product_id.default_code,
-                        'product_name': detail.product_tmpl_id.name,
+                        'product_name': detail.product_id.product_tmpl_id.name,
                         'price_unit': price_unit,
                         'qty': detail.quantity,
                         'amount_untaxed': amount_untaxed,
