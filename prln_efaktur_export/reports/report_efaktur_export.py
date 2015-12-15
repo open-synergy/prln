@@ -53,9 +53,13 @@ class Parser(report_sxw.rml_parse):
             partner_address = o.partner_address_id.street
             partner_zip = o.partner_address_id.zip
             partner_phone = o.partner_address_id.phone
+            taxform_id = '%s%s%s' % (o.trx_code, tahun_pajak, o.taxform_id)
+            partner_npwp = o.partner_npwp.value.replace("-","")
+            partner_npwp = partner_npwp.replate(".","")
+
 
             data = {
-                'taxform_id': o.taxform_id,
+                'taxform_id': taxform_id,
                 'company_name': o.company_id.name,
                 'company_npwp': o.company_npwp,
                 'masa_pajak': masa_pajak,
@@ -66,7 +70,7 @@ class Parser(report_sxw.rml_parse):
                 'jumlah_ppn': o.amount_tax,
                 'jumlah_ppnbm': o.amount_total_ppnbm,
                 'referensi': o.invoice_id.number,
-                'partner_npwp': o.partner_npwp.value or '-',
+                'partner_npwp': partner_npwp,
                 'partner_name': o.partner_id or '-',
                 'partner_street':  partner_address or '-',
                 'partner_zip': partner_zip or '-',
@@ -76,7 +80,8 @@ class Parser(report_sxw.rml_parse):
 
             if o.taxform_line:
                 for detail in o.taxform_line:
-                    amount_untaxed = detail.amount_untaxed
+                    price_unit = detail.price_subtotal / detail.quantity
+                    amount_untaxed = price_unit
 
                     if detail.discount:
                         discount = detail.discount
@@ -84,16 +89,17 @@ class Parser(report_sxw.rml_parse):
                         discount = 0
 
                     amount_discount = amount_untaxed * (discount / 100.0)
-                    dpp = amount_untaxed - amount_discount
+                    # dpp = amount_untaxed - amount_discount
+                    dpp = detail.price_subtotal
                     ppn = dpp * 0.1
 
                     data1 = {
                         'product_code': detail.product_id.default_code,
-                        'product_name': detail.name,
-                        'price_unit': detail.price_unit,
+                        'product_name': detail.product_tmpl_id.name,
+                        'price_unit': price_unit,
                         'qty': detail.quantity,
                         'amount_untaxed': amount_untaxed,
-                        'discount': discount,
+                        'discount': amount_discount,
                         'dpp': dpp,
                         'ppn': ppn,
                         'tarif_ppnbm': 0,
