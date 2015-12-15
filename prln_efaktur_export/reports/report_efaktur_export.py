@@ -62,7 +62,7 @@ class Parser(report_sxw.rml_parse):
                 'taxform_id': taxform_id,
                 'company_name': o.company_id.name,
                 'company_npwp': o.company_npwp,
-                'transaction_code': o.trx_code,
+                'trx_code': o.trx_code,
                 'masa_pajak': masa_pajak,
                 'tahun_pajak': tahun_pajak,
                 'tanggal_faktur': tanggal_pajak,
