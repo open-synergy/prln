@@ -20,6 +20,7 @@
 ##############################################################################
 from report import report_sxw
 from datetime import datetime
+from decimal import Decimal, ROUND_DOWN, ROUND_05UP
 
 
 class Parser(report_sxw.rml_parse):
@@ -65,8 +66,8 @@ class Parser(report_sxw.rml_parse):
                 'tahun_pajak': tahun_pajak,
                 'tanggal_faktur': tanggal_pajak,
                 'alamat_lengkap': o.company_address_id.street,
-                'jumlah_dpp': 0.0,
-                'jumlah_ppn': 0.0,
+                'jumlah_dpp': Decimal(0.0),
+                'jumlah_ppn': Decimal(0.0),
                 'jumlah_ppnbm': 0.0,
                 'referensi': o.invoice_id.number,
                 'partner_npwp': partner_npwp,
@@ -79,22 +80,25 @@ class Parser(report_sxw.rml_parse):
 
             if o.taxform_line:
                 for detail in o.taxform_line:
-                    data['jumlah_dpp'] += detail.price_subtotal
-                    price_before_disc = detail.price_subtotal * \
-                            (100.00 / (100.00 - detail.discount))
-                    price_unit = price_before_disc / detail.quantity
-                    price_unit = round(price_unit,2)
-                    amount_untaxed = price_unit * detail.quantity
-
                     if detail.discount:
-                        discount = detail.discount
+                        discount = Decimal(detail.discount)
                     else:
-                        discount = 0
+                        discount = Decimal(0.0)
 
-                    amount_discount = amount_untaxed * (discount / 100.0)
-                    # dpp = amount_untaxed - amount_discount
-                    dpp = detail.price_subtotal
-                    ppn = dpp * 0.1
+                    price_subtotal = Decimal(detail.price_subtotal)
+                    quantity = Decimal(detail.quantity)
+                    data['jumlah_dpp'] += price_subtotal
+                    price_before_disc = price_subtotal * \
+                            (Decimal(100.00) / (Decimal(100.00) - discount))
+                    price_unit = price_before_disc / quantity
+                    price_unit = Decimal(price_unit.quantize(Decimal('.01'), rounding=ROUND_05UP))
+                    amount_untaxed = price_unit * quantity
+                    amount_untaxed = Decimal(amount_untaxed.quantize(Decimal('1.'), rounding=ROUND_DOWN))
+
+
+                    amount_discount = amount_untaxed * (discount / Decimal(100.0))
+                    dpp = price_subtotal
+                    ppn = dpp * Decimal(0.1)
 
                     data1 = {
                         'product_code': detail.product_id.default_code,
@@ -109,7 +113,7 @@ class Parser(report_sxw.rml_parse):
                         'ppnbm': 0
                         }
                     data['details_lt'].append(data1)
-                data['jumlah_ppn'] = 0.1 * data['jumlah_dpp']
+                data['jumlah_ppn'] = Decimal(0.1) * data['jumlah_dpp']
 
             self.lines.append(data)
         return self.lines
