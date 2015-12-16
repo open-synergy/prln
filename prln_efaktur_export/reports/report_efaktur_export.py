@@ -20,7 +20,7 @@
 ##############################################################################
 from report import report_sxw
 from datetime import datetime
-from decimal import Decimal, ROUND_DOWN, ROUND_05UP
+from decimal import Decimal, ROUND_DOWN, ROUND_HALF_EVEN
 
 
 class Parser(report_sxw.rml_parse):
@@ -92,15 +92,15 @@ class Parser(report_sxw.rml_parse):
                     price_before_disc = price_subtotal * \
                             (Decimal(100.00) / (Decimal(100.00) - discount))
                     price_unit = price_before_disc / quantity
-                    price_unit = Decimal(price_unit.quantize(Decimal('.01'), rounding=ROUND_05UP))
+                    price_unit = Decimal(price_unit.quantize(Decimal('.01'), rounding=ROUND_HALF_EVEN))
                     amount_untaxed = price_unit * quantity
-                    amount_untaxed = Decimal(amount_untaxed.quantize(Decimal('.01'), rounding=ROUND_05UP))
+                    amount_untaxed = Decimal(amount_untaxed.quantize(Decimal('.01'), rounding=ROUND_HALF_EVEN))
 
 
                     amount_discount = amount_untaxed * (discount / Decimal(100.0))
                     dpp = price_subtotal
                     ppn = dpp * Decimal(0.1)
-                    ppn = Decimal(ppn.quantize(Decimal('.01'), rounding=ROUND_05UP))
+                    ppn = Decimal(ppn.quantize(Decimal('.01'), rounding=ROUND_HALF_EVEN))
                     data['jumlah_ppn'] += ppn
 
                     data1 = {
