@@ -66,7 +66,11 @@ class pralon_query_purchasing_report(osv.osv):
             obj='res.partner'
         ),
         'po_qty': fields.float(string='Po QTY'),
+        'uom_name': fields.char(
+            string='Uom Name',
+            size=20),
         'unit_price': fields.float(string='Price Unit'),
+        'symbol': fields.char(string='Symbol', size=10),
         'picking_id': fields.many2one(
             string='Picking',
             obj='stock.picking'
@@ -76,6 +80,9 @@ class pralon_query_purchasing_report(osv.osv):
             obj='stock.move'
         ),
         'is_qty': fields.float(string='Is QTY'),
+        'is_uom_name': fields.char(
+            string='IS Uom Name',
+            size=20),
         'warehouse_id': fields.many2one(
             string='Warehouse',
             obj='stock.warehouse'
@@ -98,10 +105,13 @@ class pralon_query_purchasing_report(osv.osv):
                                 A.product_id AS product_id,
                                 A.partner_id AS partner_id,
                                 A.product_qty AS po_qty,
+                                F.name AS uom_name,
                                 A.price_unit AS unit_price,
+                                G.symbol AS symbol,
                                 E.id AS picking_id,
                                 D.id AS move_id,
                                 D.product_qty AS is_qty,
+                                H.name AS is_uom_name,
                                 B.warehouse_id AS warehouse_id
                         FROM    purchase_order_line AS A
                         JOIN    purchase_order AS B
@@ -114,13 +124,20 @@ class pralon_query_purchasing_report(osv.osv):
                                     SELECT  D1.purchase_line_id,
                                         D1.picking_id,
                                         D1.id,
-                                        D1.product_qty
+                                        D1.product_qty,
+                                        D1.product_uom
                                     FROM    stock_move D1
                                     WHERE   D1.picking_id IS NOT NULL AND
                                         D1.state = 'done'
                                 )AS D ON A.id = D.purchase_line_id
                         LEFT JOIN   stock_picking AS E
                                     ON D.picking_id=E.id
+                        JOIN    product_uom AS F
+                                ON A.product_uom=F.id
+                        JOIN    res_currency AS G
+                                ON B1.currency_id=G.id
+                        JOIN    product_uom AS H
+                                ON D.product_uom=H.id
                         WHERE   (B.state not in ('draft','cancel'))
                     )
                     """

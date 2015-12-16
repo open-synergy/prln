@@ -20,6 +20,7 @@
 ##############################################################################
 
 import time
+from datetime import datetime
 from report import report_sxw
 
 
@@ -264,8 +265,9 @@ class Parser(report_sxw.rml_parse):
         if status == 'pr':
             return self.total_pr
 
-    def get_report_subtotal(self, amount):
-        self.report_subtotal += amount
+    def get_report_subtotal(self, amount, status):
+        if status == 'line':
+            self.report_subtotal += amount
         return True
 
     def get_report_total(self):
@@ -318,6 +320,7 @@ class Parser(report_sxw.rml_parse):
                 pricelist_id = line.pricelist_id.id
                 pricelist_name = line.pricelist_id.name
                 department_id = line.department_id.id
+                department_name = line.department_id.name
                 lines_id = line.line_id.id
 
                 if not dict_data.get(company_id, False):
@@ -351,6 +354,7 @@ class Parser(report_sxw.rml_parse):
                 ):
                     dict_department = {
                         'department_id': department_id,
+                        'department_name': department_name,
                         'shipment_ids': {}
                     }
                     data_department[department_id] = dict_department
@@ -370,47 +374,68 @@ class Parser(report_sxw.rml_parse):
                     count_data = 0
                     po_is = line.po_qty
 
+                pr_date = line.requisition_id.date_start
+                conv_pr_date = datetime.strptime(
+                    pr_date, '%Y-%m-%d %H:%M:%S').strftime(
+                        '%d/%m/%Y %H:%M:%S')
+
+                po_date = line.order_id.date_order
+                conv_po_date = datetime.strptime(
+                    po_date, '%Y-%m-%d').strftime('%d/%m/%Y')
+
+                is_date = line.picking_id.date_done
+                conv_is_date = datetime.strptime(
+                    is_date, '%Y-%m-%d %H:%M:%S').strftime(
+                        '%d/%m/%Y')
+
                 if count_data == 0:
                     po_is -= line.is_qty
                     dict_lines = {
                         'department': line.department_id.name,
                         'pr_no': line.requisition_id.name,
-                        'pr_date': line.requisition_id.date_start,
-                        'product': line.product_id.name_template,
+                        'pr_date': conv_pr_date,
+                        'product': line.product_id.name_template[:30],
                         'supplier': line.partner_id.name,
                         'po_no': line.order_id.name,
-                        'po_date': line.order_id.date_order,
+                        'po_date': conv_po_date,
                         'po_qty': line.po_qty,
+                        'uom_name': line.uom_name,
                         'po_is': po_is,
                         'unit_price': line.unit_price,
+                        'symbol': line.symbol,
                         'ppn': self.get_ppn(line.id),
                         'total': self.get_subtotal(line.line_id.id),
                         'is_no': line.picking_id.name,
-                        'is_date': line.picking_id.date_done,
+                        'is_date': conv_is_date,
                         'is_qty': line.is_qty,
-                        'warehouse': line.warehouse_id.name
+                        'is_uom_name': line.is_uom_name,
+                        'warehouse': line.warehouse_id.name,
+                        'status': 'line'
                     }
                     count_data += 1
                 else:
                     po_is -= line.is_qty
                     dict_lines = {
-                        'department': False,
-                        'pr_no': False,
-                        'pr_date': False,
-                        'product': False,
-                        'supplier': False,
-                        'po_no': False,
-                        'po_date': False,
-                        'po_qty': False,
+                        'department': line.department_id.name,
+                        'pr_no': line.requisition_id.name,
+                        'pr_date': conv_pr_date,
+                        'product': line.product_id.name_template[:30],
+                        'supplier': line.partner_id.name,
+                        'po_no': line.order_id.name,
+                        'po_date': conv_po_date,
+                        'po_qty': line.po_qty,
+                        'uom_name': line.uom_name,
                         'po_is': po_is,
-                        'unit_price': False,
-                        'ppn': False,
-                        'total': False,
+                        'unit_price': line.unit_price,
+                        'symbol': line.symbol,
+                        'ppn': self.get_ppn(line.id),
+                        'total': self.get_subtotal(line.line_id.id),
                         'is_no': line.picking_id.name,
-                        'is_date': line.picking_id.date_done,
+                        'is_date': conv_is_date,
                         'is_qty': line.is_qty,
-                        'warehouse': False
-
+                        'is_uom_name': line.is_uom_name,
+                        'warehouse': line.warehouse_id.name,
+                        'status': 'detail'
                     }
                 data_lines = data_shipment[lines_id]['lines']
                 data_lines.append(dict_lines)
