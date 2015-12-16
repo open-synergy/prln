@@ -20,7 +20,7 @@
 ##############################################################################
 from report import report_sxw
 from datetime import datetime
-from decimal import Decimal, ROUND_DOWN, ROUND_05UP, ROUND_UP
+from decimal import Decimal, ROUND_DOWN, ROUND_05UP
 
 
 class Parser(report_sxw.rml_parse):
@@ -68,7 +68,7 @@ class Parser(report_sxw.rml_parse):
                 'tanggal_faktur': tanggal_pajak,
                 'alamat_lengkap': o.company_address_id.street,
                 'jumlah_dpp': Decimal(0.0),
-                'jumlah_ppn': Decimal(o.amount_tax),
+                'jumlah_ppn': Decimal(0.0),
                 'jumlah_ppnbm': 0.0,
                 'referensi': o.invoice_id.number,
                 'partner_npwp': partner_npwp,
@@ -94,12 +94,14 @@ class Parser(report_sxw.rml_parse):
                     price_unit = price_before_disc / quantity
                     price_unit = Decimal(price_unit.quantize(Decimal('.01'), rounding=ROUND_05UP))
                     amount_untaxed = price_unit * quantity
-                    amount_untaxed = Decimal(amount_untaxed.quantize(Decimal('1.'), rounding=ROUND_DOWN))
+                    amount_untaxed = Decimal(amount_untaxed.quantize(Decimal('.01'), rounding=ROUND_05UP))
 
 
                     amount_discount = amount_untaxed * (discount / Decimal(100.0))
                     dpp = price_subtotal
                     ppn = dpp * Decimal(0.1)
+                    ppn = Decimal(ppn.quantize(Decimal('.01'), rounding=ROUND_05UP))
+                    data['jumlah_ppn'] += ppn
 
                     data1 = {
                         'product_code': detail.product_id.default_code,
@@ -114,8 +116,7 @@ class Parser(report_sxw.rml_parse):
                         'ppnbm': 0
                         }
                     data['details_lt'].append(data1)
-                # data['jumlah_ppn'] = Decimal(0.1) * data['jumlah_dpp']
-                # data['jumlah_ppn'] = Decimal(data['jumlah_ppn'].quantize(Decimal('1.'), rounding=ROUND_UP))
+                data['jumlah_ppn'] = Decimal(data['jumlah_ppn'].quantize(Decimal('1.'), rounding=ROUND_DOWN))
 
             self.lines.append(data)
         return self.lines
