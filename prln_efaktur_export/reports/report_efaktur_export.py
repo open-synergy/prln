@@ -54,8 +54,10 @@ class Parser(report_sxw.rml_parse):
             partner_address = o.partner_address_id.street
             partner_zip = o.partner_address_id.zip
             partner_phone = o.partner_address_id.phone
-            taxform_id = '%s%s%s' % \
-                (o.branch_code, tahun_pajak[-2:], o.taxform_id)
+
+            taxform_id = '%s%s%s' % (
+                o.branch_code, tahun_pajak[-2:], o.taxform_id)
+
             partner_npwp = o.partner_npwp.value.replace("-", "")
             partner_npwp = partner_npwp.replace(".", "")
 
@@ -93,24 +95,26 @@ class Parser(report_sxw.rml_parse):
                     price_before_disc = price_subtotal * \
                         (Decimal(100.00) / (Decimal(100.00) - discount))
                     price_unit = price_before_disc / quantity
-                    price_unit = Decimal(price_unit.quantize(
-                        Decimal('.01'),
-                        rounding=ROUND_HALF_EVEN))
-                    amount_untaxed = price_unit * quantity
-                    amount_untaxed = Decimal(amount_untaxed.quantize(
-                        Decimal('.01'),
-                        rounding=ROUND_HALF_EVEN))
 
-                    amount_discount = amount_untaxed * \
-                        (discount / Decimal(100.0))
-                    amount_discount = Decimal(amount_discount.quantize(
-                        Decimal('.01'),
-                        rounding=ROUND_HALF_EVEN))
+                    price_unit = Decimal(
+                        price_unit.quantize(
+                            Decimal('.01'), rounding=ROUND_HALF_EVEN))
+                    amount_untaxed = price_unit * quantity
+                    amount_untaxed = Decimal(
+                        amount_untaxed.quantize(
+                            Decimal('.01'), rounding=ROUND_HALF_EVEN))
+
+                    amount_discount = amount_untaxed * (
+                        discount / Decimal(100.0))
+                    amount_discount = Decimal(
+                        amount_discount.quantize(
+                            Decimal('.01'), rounding=ROUND_HALF_EVEN))
                     dpp = price_subtotal
                     ppn = dpp * Decimal(0.1)
-                    ppn = Decimal(ppn.quantize(
-                        Decimal('.01'),
-                        rounding=ROUND_HALF_EVEN))
+                    ppn = Decimal(
+                        ppn.quantize(
+                            Decimal('.01'), rounding=ROUND_HALF_EVEN))
+
                     data['jumlah_ppn'] += ppn
 
                     data1 = {
@@ -126,9 +130,10 @@ class Parser(report_sxw.rml_parse):
                         'ppnbm': 0
                         }
                     data['details_lt'].append(data1)
-                data['jumlah_ppn'] = Decimal(data['jumlah_ppn'].quantize(
-                    Decimal('1.'),
-                    rounding=ROUND_DOWN))
+
+                data['jumlah_ppn'] = Decimal(
+                    data['jumlah_ppn'].quantize(
+                        Decimal('1.'), rounding=ROUND_DOWN))
 
             self.lines.append(data)
         return self.lines
