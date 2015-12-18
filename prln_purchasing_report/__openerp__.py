@@ -29,7 +29,9 @@
         'purchase_requisition',
         'pralon_purchase_enhancements',
         'report_aeroo_ooo',
-        'pralon_accounting_reports'
+        'pralon_accounting_reports',
+        'via_purchase_enhancements',
+        'pralon_sale_enhancements'
     ],
     'description': """
 Purchasing Report Based On Purchase Order.

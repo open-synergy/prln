@@ -49,10 +49,16 @@ class pralon_query_purchasing_report(osv.osv):
             obj='product.pricelist'
         ),
         'pricelist_name': fields.char(string='Pricelist Name', size=64),
+        'currency_id': fields.many2one(
+            string='Currency',
+            obj='res.currency'
+        ),
+        'currency_name': fields.char(string='Currency Name', size=64),
         'requisition_id': fields.many2one(
             string='Requisition',
             obj='purchase.requisition'
         ),
+        'pr_no': fields.char(string='PR No', size=64),
         'department_id': fields.many2one(
             string='Department',
             obj='hr.department'
@@ -100,7 +106,10 @@ class pralon_query_purchasing_report(osv.osv):
                                 B.company_id AS company_id,
                                 B.pricelist_id AS pricelist_id,
                                 B1.name AS pricelist_name,
+                                B2.id AS currency_id,
+                                B2.name AS currency_name,
                                 B.requisition_id AS requisition_id,
+                                C.name AS pr_no,
                                 C.department_id AS department_id,
                                 A.product_id AS product_id,
                                 A.partner_id AS partner_id,
@@ -118,6 +127,8 @@ class pralon_query_purchasing_report(osv.osv):
                                 ON A.order_id=B.id
                         JOIN    product_pricelist AS B1
                                 ON B.pricelist_id=B1.id
+                        JOIN    res_currency AS B2
+                                ON B1.currency_id=B2.id
                         JOIN   purchase_requisition AS C
                                     ON B.requisition_id=C.id
                         LEFT JOIN   (
