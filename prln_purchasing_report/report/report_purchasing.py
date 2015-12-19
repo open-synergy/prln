@@ -29,7 +29,8 @@ class Parser(report_sxw.rml_parse):
     def __init__(self, cr, uid, name, context):
         super(Parser, self).__init__(cr, uid, name, context)
         self.lst_lines = []
-        self.lst_pricelist = []
+        self.lst_currency = []
+        self.line_currency_ids = []
         self.report_subtotal = 0.0
         self.report_grandtotal = 0.0
         self.total_po = 0
@@ -40,13 +41,13 @@ class Parser(report_sxw.rml_parse):
             'get_po_date_to': self.get_po_date_to,
             'get_companies': self.get_companies,
             'get_department': self.get_department,
-            'get_pricelist': self.get_pricelist,
+            'get_currency': self.get_currency,
             'get_lines_id': self.get_lines_id,
             'get_subtotal': self.get_report_subtotal,
             'get_total': self.get_report_total,
             'grand_total': self.get_report_grandtotal,
             'get_po_pr': self.get_po_pr,
-            'get_list_pricelist': self.get_list_pricelist,
+            'get_list_currency': self.get_list_currency,
             'get_lines': self.lines
         })
 
@@ -172,30 +173,72 @@ class Parser(report_sxw.rml_parse):
 
         return line_companies_ids
 
-    def get_pricelist(self):
-        line_pricelist_ids = []
+    def get_currency(self):
+        data_form = self.localcontext['data']['form']
+        date_from = data_form['po_date_from']
+        date_to = data_form['po_date_to']
+        list_department = []
+        list_company = []
+
+        for department in self.get_department():
+            list_department.append(department['id'])
+
+        for company in self.get_companies():
+            list_company.append(company['id'])
 
         self.cr.execute("""\
-            SELECT DISTINCT pricelist_id AS pricelist_id,
-                        pricelist_name AS pricelist_name
-            FROM        pralon_query_purchasing_report
-            """)
-        for pricelist in self.cr.dictfetchall():
-            res = {
-                'name': pricelist['pricelist_name'],
-                'id': pricelist['pricelist_id']
-            }
-            line_pricelist_ids.append(res)
+            SELECT DISTINCT currency_id AS currency_id,
+                        currency_name AS currency_name
+            FROM    pralon_query_purchasing_report
+            WHERE   date_approve >= %s AND
+                    date_approve <= %s AND
+                    company_id in %s AND
+                    department_id in %s
+            """, (
+            date_from,
+            date_to,
+            tuple(list_company),
+            tuple(list_department))
+        )
 
-        return line_pricelist_ids
+        for currency in self.cr.dictfetchall():
+            if currency:
+                res = {
+                    'name': currency['currency_name'],
+                    'id': currency['currency_id']
+                }
+                self.line_currency_ids.append(res)
+
+        return self.line_currency_ids
 
     def get_lines_id(self):
         line_ids = []
+        data_form = self.localcontext['data']['form']
+        date_from = data_form['po_date_from']
+        date_to = data_form['po_date_to']
+        list_department = []
+        list_company = []
+
+        for department in self.get_department():
+            list_department.append(department['id'])
+
+        for company in self.get_companies():
+            list_company.append(company['id'])
 
         self.cr.execute("""\
             SELECT DISTINCT line_id AS line_id
-            FROM        pralon_query_purchasing_report
-            """)
+            FROM    pralon_query_purchasing_report
+            WHERE   date_approve >= %s AND
+                    date_approve <= %s AND
+                    company_id in %s AND
+                    department_id in %s
+            """, (
+            date_from,
+            date_to,
+            tuple(list_company),
+            tuple(list_department))
+        )
+
         for lines in self.cr.dictfetchall():
             res = {
                 'id': lines['line_id']
@@ -248,11 +291,33 @@ class Parser(report_sxw.rml_parse):
         return line_department_ids
 
     def get_po_pr(self, status):
+        data_form = self.localcontext['data']['form']
+        date_from = data_form['po_date_from']
+        date_to = data_form['po_date_to']
+        list_department = []
+        list_company = []
+
+        for department in self.get_department():
+            list_department.append(department['id'])
+
+        for company in self.get_companies():
+            list_company.append(company['id'])
+
         self.cr.execute("""\
             SELECT  DISTINCT order_id AS order_id,
                     requisition_id AS requisition_id
             FROM    pralon_query_purchasing_report
-            """)
+            WHERE   date_approve >= %s AND
+                    date_approve <= %s AND
+                    company_id in %s AND
+                    department_id in %s
+            """, (
+            date_from,
+            date_to,
+            tuple(list_company),
+            tuple(list_department))
+        )
+
         for lines in self.cr.dictfetchall():
             if lines['order_id']:
                 if status == 'po':
@@ -270,29 +335,48 @@ class Parser(report_sxw.rml_parse):
             self.report_subtotal += amount
         return True
 
-    def get_report_total(self):
+    def get_report_total(self, currency_name):
+        res = {}
         total = 0.0
         total = self.report_subtotal
         self.report_subtotal = 0.0
         self.report_grandtotal += total
 
+        res = {
+            'currency_name': currency_name,
+            'total': total
+        }
+        self.lst_currency.append(res)
+
         return total
 
-    def get_report_grandtotal(self, pricelist_name):
-        grand_total = 0.0
+    def get_report_grandtotal(self):
         grand_total = self.report_grandtotal
         self.report_grandtotal = 0.0
 
-        res = {
-            'pricelist_name': pricelist_name,
-            'total': grand_total
-        }
-        self.lst_pricelist.append(res)
-
         return grand_total
 
-    def get_list_pricelist(self):
-        return self.lst_pricelist
+    def get_list_currency(self):
+        summary = []
+        for data in self.line_currency_ids:
+            total = 0
+            currency_name = data['name']
+
+            if not data:
+                return False
+
+            for x in self.lst_currency:
+                if not x:
+                    return False
+
+                if x['currency_name'] == currency_name:
+                    total += x['total']
+            res = {
+                'currency_name': currency_name,
+                'total': total
+            }
+            summary.append(res)
+        return summary
 
     def lines(self):
         dict_data = {}
@@ -310,15 +394,16 @@ class Parser(report_sxw.rml_parse):
             ('date_approve', '<=', date_to)
         ]
 
-        line_ids = obj_line.search(self.cr, self.uid, kriteria)
+        line_ids = obj_line.search(
+            self.cr, self.uid, kriteria, order='pr_no desc')
 
         if line_ids:
             line_id = obj_line.browse(self.cr, self.uid, line_ids)
             for line in line_id:
                 company_id = line.company_id.id
                 company_name = line.company_id.name
-                pricelist_id = line.pricelist_id.id
-                pricelist_name = line.pricelist_id.name
+                currency_id = line.currency_id.id
+                currency_name = line.currency_name
                 department_id = line.department_id.id
                 department_name = line.department_id.name
                 lines_id = line.line_id.id
@@ -327,27 +412,27 @@ class Parser(report_sxw.rml_parse):
                     dict_company = {
                         'company_id': company_id,
                         'company_name': company_name,
-                        'pricelist_ids': {}
+                        'currency_ids': {}
                     }
                     dict_data[company_id] = dict_company
 
                 data_company = dict_data[company_id]
 
-                data_pricelist_ids = data_company['pricelist_ids']
+                data_currency_ids = data_company['currency_ids']
 
-                if not data_pricelist_ids.get(
-                    pricelist_id, False
+                if not data_currency_ids.get(
+                    currency_id, False
                 ):
-                    dict_pricelist = {
-                        'pricelist_id': pricelist_id,
-                        'pricelist_name': pricelist_name,
+                    dict_currency = {
+                        'currency_id': currency_id,
+                        'currency_name': currency_name,
                         'department_ids': {}
                     }
-                    data_pricelist_ids[pricelist_id] = dict_pricelist
+                    data_currency_ids[currency_id] = dict_currency
 
-                data_pricelist = data_pricelist_ids[pricelist_id]
+                data_currency = data_currency_ids[currency_id]
 
-                data_department = data_pricelist['department_ids']
+                data_department = data_currency['department_ids']
 
                 if not data_department.get(
                     department_id, False
@@ -392,11 +477,11 @@ class Parser(report_sxw.rml_parse):
                     po_is -= line.is_qty
                     dict_lines = {
                         'department': line.department_id.name,
-                        'pr_no': line.requisition_id.name,
+                        'pr_no': line.pr_no,
                         'pr_date': conv_pr_date,
                         'product': line.product_id.name_template[:30],
                         'supplier': line.partner_id.name,
-                        'po_no': line.order_id.name,
+                        'po_no': line.order_id.order_number,
                         'po_date': conv_po_date,
                         'po_qty': line.po_qty,
                         'uom_name': line.uom_name,
@@ -409,7 +494,7 @@ class Parser(report_sxw.rml_parse):
                         'is_date': conv_is_date,
                         'is_qty': line.is_qty,
                         'is_uom_name': line.is_uom_name,
-                        'warehouse': line.warehouse_id.name,
+                        'warehouse': line.warehouse_id.code,
                         'status': 'line'
                     }
                     count_data += 1
@@ -417,11 +502,11 @@ class Parser(report_sxw.rml_parse):
                     po_is -= line.is_qty
                     dict_lines = {
                         'department': line.department_id.name,
-                        'pr_no': line.requisition_id.name,
+                        'pr_no': line.pr_no,
                         'pr_date': conv_pr_date,
                         'product': line.product_id.name_template[:30],
                         'supplier': line.partner_id.name,
-                        'po_no': line.order_id.name,
+                        'po_no': line.order_id.order_number,
                         'po_date': conv_po_date,
                         'po_qty': line.po_qty,
                         'uom_name': line.uom_name,
@@ -434,10 +519,9 @@ class Parser(report_sxw.rml_parse):
                         'is_date': conv_is_date,
                         'is_qty': line.is_qty,
                         'is_uom_name': line.is_uom_name,
-                        'warehouse': line.warehouse_id.name,
+                        'warehouse': line.warehouse_id.code,
                         'status': 'detail'
                     }
                 data_lines = data_shipment[lines_id]['lines']
                 data_lines.append(dict_lines)
-
         return dict_data
