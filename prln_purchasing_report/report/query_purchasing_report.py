@@ -94,7 +94,7 @@ class pralon_query_purchasing_report(osv.osv):
             obj='stock.warehouse'
         )
     }
-    
+
     _order = 'pr_no'
 
     def init(self, cr):
