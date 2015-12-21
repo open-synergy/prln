@@ -150,6 +150,7 @@ class pralon_query_purchasing_report(osv.osv):
                         JOIN    product_uom AS H
                                 ON D.product_uom=H.id
                         WHERE   (B.state not in ('draft','cancel'))
+                        ORDER BY requisition_id DESC
                     )
                     """
         cr.execute(strSQL)
