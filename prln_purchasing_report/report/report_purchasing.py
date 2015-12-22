@@ -232,6 +232,7 @@ class Parser(report_sxw.rml_parse):
                     date_approve <= %s AND
                     company_id in %s AND
                     department_id in %s
+            ORDER BY line_id
             """, (
             date_from,
             date_to,
