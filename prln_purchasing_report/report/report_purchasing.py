@@ -33,8 +33,6 @@ class Parser(report_sxw.rml_parse):
         self.line_currency_ids = []
         self.report_subtotal = 0.0
         self.report_grandtotal = 0.0
-        self.total_po = 0
-        self.total_pr = 0
         self.localcontext.update({
             'time': time,
             'get_po_date_from': self.get_po_date_from,
@@ -305,8 +303,8 @@ class Parser(report_sxw.rml_parse):
             list_company.append(company['id'])
 
         self.cr.execute("""\
-            SELECT  DISTINCT order_id AS order_id,
-                    requisition_id AS requisition_id
+            SELECT  COUNT(DISTINCT order_id) AS total_po,
+                    COUNT(DISTINCT requisition_id) AS total_pr
             FROM    pralon_query_purchasing_report
             WHERE   date_approve >= %s AND
                     date_approve <= %s AND
@@ -320,16 +318,10 @@ class Parser(report_sxw.rml_parse):
         )
 
         for lines in self.cr.dictfetchall():
-            if lines['order_id']:
-                if status == 'po':
-                    self.total_po += 1
-            if lines['requisition_id']:
-                if status == 'pr':
-                    self.total_pr += 1
-        if status == 'po':
-            return self.total_po
-        if status == 'pr':
-            return self.total_pr
+            if status == 'po':
+                return lines['total_po']
+            if status == 'pr':
+                return lines['total_pr']
 
     def get_report_subtotal(self, amount, status):
         if status == 'line':
