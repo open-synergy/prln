@@ -25,7 +25,7 @@
     'license': 'AGPL-3',
     'category': 'Sale',
     'depends': [
-        'prln_sale_vat_rounding',
+        'account',
     ],
     'description': """
     """,
