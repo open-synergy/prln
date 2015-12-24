@@ -19,7 +19,7 @@ class account_taxform(osv.osv):
             }
 
             for line in taxform.taxform_line:
-                res[taxform.id]['amount_full'] += line.subtotal
+                res[taxform.id]['amount_full'] += line.price_subtotal
                 res[taxform.id]['amount_untaxed'] += line.price_subtotal
                 res[taxform.id]['amount_discount'] += line.price_subtotal \
                     * line.discount / 100.0
