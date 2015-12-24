@@ -26,6 +26,7 @@
     'category': 'Sale',
     'depends': [
         'sale',
+        'prln_invoice_vat_rounding'
     ],
     'description': """
     """,

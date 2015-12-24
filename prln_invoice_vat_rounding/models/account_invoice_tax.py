@@ -23,8 +23,9 @@ class account_invoice_tax(osv.osv):
                     (line.price_unit * (1-(line.discount or 0.0)/100.0)),
                     line.quantity, inv.address_invoice_id.id,
                     line.product_id, inv.partner_id)['taxes']:
-                # tax['price_unit'] = cur_obj.round(
-                #     cr, uid, cur, tax['price_unit'])
+                if inv.type in ('in_invoice', 'in_refund'):
+                    tax['price_unit'] = cur_obj.round(
+                        cr, uid, cur, tax['price_unit'])
                 val = {}
                 val['invoice_id'] = inv.id
                 val['name'] = tax['name']
@@ -83,9 +84,11 @@ class account_invoice_tax(osv.osv):
 
         for t in tax_grouped.values():
             t['base'] = cur_obj.round(cr, uid, cur, t['base'])
-            # t['amount'] = cur_obj.round(cr, uid, cur, t['amount'])
-            t['amount'] = float(int(t['amount']))
             t['base_amount'] = cur_obj.round(cr, uid, cur, t['base_amount'])
-            # t['tax_amount'] = cur_obj.round(cr, uid, cur, t['tax_amount'])
-            t['tax_amount'] = float(int(t['tax_amount']))
+            if inv.type in ('in_invoice', 'in_refund'):
+                t['amount'] = cur_obj.round(cr, uid, cur, t['amount'])
+                t['tax_amount'] = cur_obj.round(cr, uid, cur, t['tax_amount'])
+            else:
+                t['amount'] = float(int(t['amount']))
+                t['tax_amount'] = float(int(t['tax_amount']))
         return tax_grouped
