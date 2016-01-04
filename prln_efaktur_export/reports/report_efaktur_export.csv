@@ -2,7 +2,7 @@
 "LT","NPWP","NAMA","JALAN","BLOK","NOMOR","RT","RW","KECAMATAN","KELURAHAN","KABUPATEN","PROPINSI","KODE_POS","NOMOR_TELEPON",,,,,
 "OF","KODE_OBJEK","NAMA","HARGA_SATUAN","JUMLAH_BARANG","HARGA_TOTAL","DISKON","DPP","PPN","TARIF_PPNBM","PPNBM",,,,,,,,
 {% for taxform in get_lines() %}\
-"FK","01","0","${taxform.taxform_id}","${taxform.masa_pajak}","${taxform.tahun_pajak}","${taxform.tanggal_faktur}","${taxform.partner_npwp}","PARTNER_NAME","${taxform.partner_street}","${taxform.jumlah_dpp}","${taxform.jumlah_ppn}","0",,,,,"0","${taxform.referensi}"
+"FK","01","0","${taxform.taxform_id}","${taxform.masa_pajak}","${taxform.tahun_pajak}","${taxform.tanggal_faktur}","${taxform.partner_npwp}","${taxform.partner_name}","${taxform.partner_street}","${taxform.jumlah_dpp}","${taxform.jumlah_ppn}","0",,,,,"0","${taxform.referensi}"
 {% if taxform.details_lt %}{% for detail in taxform.details_lt %}\
 "OF","${detail.product_code}","${detail.product_name}","${detail.price_unit}","${detail.qty}","${detail.amount_untaxed}","${detail.discount}","${detail.dpp}","${detail.ppn}","0","0",,,,,,,,
 {% end %}\
