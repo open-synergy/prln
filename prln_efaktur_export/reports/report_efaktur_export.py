@@ -75,7 +75,7 @@ class Parser(report_sxw.rml_parse):
                 'jumlah_ppnbm': 0.0,
                 'referensi': o.invoice_id.number,
                 'partner_npwp': partner_npwp,
-                'partner_name': o.partner_id or '-',
+                'partner_name': o.partner_id.name or '-',
                 'partner_street':  partner_address or '-',
                 'partner_zip': partner_zip or '-',
                 'partner_phone': partner_phone or '-',
