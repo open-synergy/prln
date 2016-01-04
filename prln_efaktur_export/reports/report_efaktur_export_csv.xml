@@ -7,12 +7,13 @@
             <field name="model">account.taxform</field>
             <field name="report_name">report_pralon_efakturExport_csv</field>
             <field name="report_type">aeroo</field>
-            <field name="in_format">oo-ods</field>
-            <field name="out_format" ref="report_aeroo.report_mimetypes_ods_ods"/>
+            <field name="in_format">genshi-raw</field>
+            <field name="out_format" ref="report_aeroo.report_mimetypes_raw"/>
             <field name="parser_loc">prln_efaktur_export/reports/report_efaktur_export.py</field>
-            <field name="report_rml">prln_efaktur_export/reports/report_efaktur_export.ods</field>
+            <field name="report_rml">prln_efaktur_export/reports/report_efaktur_export.csv</field>
             <field name="parser_state">loc</field>
             <field name="tml_source">file</field>
+            <field name="content_fname">csv</field>
         </record>    
     </data>
 </openerp>
