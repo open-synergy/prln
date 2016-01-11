@@ -62,6 +62,11 @@ class Parser(report_sxw.rml_parse):
 
             partner_npwp = o.partner_npwp.value.replace("-", "")
             partner_npwp = partner_npwp.replace(".", "")
+            partner_title = o.partner_id.title and \
+                o.partner_id.title.name or ''
+            partner_name = '%s %s' % (
+                partner_title, o.partner_id.name)
+            partner_name = partner_name.strip()
 
             data = {
                 'taxform_id': taxform_id,
@@ -77,7 +82,7 @@ class Parser(report_sxw.rml_parse):
                 'jumlah_ppnbm': 0.0,
                 'referensi': o.invoice_id.number,
                 'partner_npwp': partner_npwp,
-                'partner_name': o.partner_id.name or '-',
+                'partner_name': partner_name,
                 'partner_street':  partner_address or '-',
                 'partner_zip': partner_zip or '-',
                 'partner_phone': partner_phone or '-',
