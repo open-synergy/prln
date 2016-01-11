@@ -124,9 +124,13 @@ class Parser(report_sxw.rml_parse):
 
                     data['jumlah_ppn'] += ppn
 
+                    product_name = detail.product_id.product_tmpl_id.name
+                    u = u'\N{DEGREE SIGN}'
+                    product_name = product_name.replace(u, '')
+
                     data1 = {
                         'product_code': detail.product_id.default_code,
-                        'product_name': detail.product_id.product_tmpl_id.name,
+                        'product_name': product_name,
                         'price_unit': price_unit,
                         'qty': detail.quantity,
                         'amount_untaxed': amount_untaxed,
