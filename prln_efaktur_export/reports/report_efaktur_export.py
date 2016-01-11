@@ -58,7 +58,7 @@ class Parser(report_sxw.rml_parse):
             taxform_id = '%s%s' % (
                 o.branch_code or '', o.taxform_id)
 
-            taxform_id = taxform_id.replace(".","")
+            taxform_id = taxform_id.replace(".", "")
 
             partner_npwp = o.partner_npwp.value.replace("-", "")
             partner_npwp = partner_npwp.replace(".", "")
