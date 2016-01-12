@@ -40,6 +40,9 @@ class Parser(report_sxw.rml_parse):
         uid = self.uid
         obj_taxform = pool.get('account.taxform')
         taxform_ids = self.localcontext['data']['form'].get('taxform_ids', [])
+
+        ADR = "%s BLOK %s NO.%s RT.%s RW.%s Kel.%s Kec.%s Kota/Kab %s %s %s"
+
         if not taxform_ids:
             return self.lines
 
@@ -51,7 +54,20 @@ class Parser(report_sxw.rml_parse):
             dt_tanggal_pajak = datetime.strptime(o.invoice_date, '%Y-%m-%d')
             tanggal_pajak = dt_tanggal_pajak.strftime('%d/%m/%Y')
 
-            partner_address = o.partner_address_id.street
+            address = o.partner_address_id
+            partner_address = ADR % (
+                address.street,
+                address.address_block or '-',
+                address.address_number or '-',
+                address.address_rt or '-',
+                address.address_rw or '-',
+                address.address_kel or '-',
+                address.address_kec or '-',
+                address.city or '-',
+                address.state_id and address.state_id.name or '-',
+                address.zip or ''
+                )
+
             partner_zip = o.partner_address_id.zip
             partner_phone = o.partner_address_id.phone
 
