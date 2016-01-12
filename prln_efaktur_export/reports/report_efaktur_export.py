@@ -49,6 +49,7 @@ class Parser(report_sxw.rml_parse):
         for o in obj_taxform.browse(cr, uid, taxform_ids):
             dt_masa_pajak = datetime.strptime(o.invoice_date, '%Y-%m-%d')
             masa_pajak = dt_masa_pajak.strftime('%m')
+            masa_pajak = int(masa_pajak)
             dt_tahun_pajak = datetime.strptime(o.invoice_date, '%Y-%m-%d')
             tahun_pajak = dt_tahun_pajak.strftime('%Y')
             dt_tanggal_pajak = datetime.strptime(o.invoice_date, '%Y-%m-%d')
