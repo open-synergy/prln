@@ -33,6 +33,7 @@
     """,
     'website': 'http://opensynergy-indonesia.com',
     'data': [
+        'views/res_partner_views.xml',
         'wizards/wzd_efaktur_export.xml',
         'reports/report_efaktur_export_csv.xml',
     ],

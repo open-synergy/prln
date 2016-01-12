@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>  
+
+        <record id="form_pralon_resPartnerAddressEFaktur" model="ir.ui.view">
+            <field name="name">eFaktur Addition</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="base.view_partner_form"/>
+            <field name="type">form</field>
+            <field name="arch" type="xml" >
+                <data>
+                    <xpath expr="//page[@string='General']/field[@name='address']/form/group/field[@name='street2']" position="after">
+                        <field name="address_block"/>
+                        <field name="address_number"/>
+                        <field name="address_rt"/>
+                        <field name="address_rw"/>
+                        <field name="address_kel"/>
+                        <field name="address_kec"/>
+                    </xpath>
+                </data>
+            </field>
+        </record>
+        
+
+    </data>
+</openerp>
