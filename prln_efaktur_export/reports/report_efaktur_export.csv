@@ -1,9 +1,10 @@
-"FK","KD_JENIS_TRANSAKSI","FG_PENGGANTI","NOMOR_FAKTUR","MASA_PAJAK","TAHUN_PAJAK","TANGGAL_FAKTUR","NPWP","NAMA","ALAMAT_LENGKAP","JUMLAH_DPP","JUMLAH_PPN","JUMLAH_PPNBM","ID_KETERANGAN_TAMBAHAN","FG_UANG_MUKA","UANG_MUKA_DPP","UANG_MUKA_PPN","UANG_MUKA_PPNBM","REFERENSI"
-"OF","KODE_OBJEK","NAMA","HARGA_SATUAN","JUMLAH_BARANG","HARGA_TOTAL","DISKON","DPP","PPN","TARIF_PPNBM","PPNBM"
+FK,KD_JENIS_TRANSAKSI,FG_PENGGANTI,NOMOR_FAKTUR,MASA_PAJAK,TAHUN_PAJAK,TANGGAL_FAKTUR,NPWP,NAMA,ALAMAT_LENGKAP,JUMLAH_DPP,JUMLAH_PPN,JUMLAH_PPNBM,ID_KETERANGAN_TAMBAHAN,FG_UANG_MUKA,UANG_MUKA_DPP,UANG_MUKA_PPN,UANG_MUKA_PPNBM,REFERENSI
+LT,NPWP,NAMA,JALAN,BLOK,NOMOR,RT,RW,KECAMATAN,KELURAHAN,KABUPATEN,PROPINSI,KODE_POS,NOMOR_TELEPON,,,,,
+OF,KODE_OBJEK,NAMA,HARGA_SATUAN,JUMLAH_BARANG,HARGA_TOTAL,DISKON,DPP,PPN,TARIF_PPNBM,PPNBM,,,,,,,,
 {% for taxform in get_lines() %}\
-"FK","01","0","${taxform.taxform_id}","${taxform.masa_pajak}","${taxform.tahun_pajak}","${taxform.tanggal_faktur}","${taxform.partner_npwp}","${taxform.partner_name}","${taxform.partner_street}","${taxform.jumlah_dpp}","${taxform.jumlah_ppn}","0","","0","0","0","0","${taxform.referensi}"
+FK,01,0,${taxform.taxform_id},${taxform.masa_pajak},${taxform.tahun_pajak},${taxform.tanggal_faktur},${taxform.partner_npwp},${taxform.partner_name},${taxform.partner_street},${taxform.jumlah_dpp},${taxform.jumlah_ppn},0,,0,0,0,0,${taxform.referensi}
 {% if taxform.details_lt %}{% for detail in taxform.details_lt %}\
-"OF","${detail.product_code}","${detail.product_name}","${detail.price_unit}","${detail.qty}","${detail.amount_untaxed}","${detail.discount}","${detail.dpp}","${detail.ppn}","0","0"
+OF,${detail.product_code},"${detail.product_name}",${detail.price_unit},${detail.qty},${detail.amount_untaxed},${detail.discount},${detail.dpp},${detail.ppn},0,0,,,,,,,,
 {% end %}\
 {% end %}\
 {% end %}\
