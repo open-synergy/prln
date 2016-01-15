@@ -144,7 +144,7 @@ class Parser(report_sxw.rml_parse):
                     product_name = detail.product_id.product_tmpl_id.name
                     u = u'\N{DEGREE SIGN}'
                     product_name = product_name.replace(u, '')
-                    product_name = product_name.replace('"','""')
+                    product_name = product_name.replace('"', '""')
 
                     data1 = {
                         'product_code': detail.product_id.default_code,
