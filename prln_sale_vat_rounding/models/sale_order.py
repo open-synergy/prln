@@ -33,10 +33,10 @@ class sale_order(osv.osv):
                 val1 += line.price_subtotal
                 val += self._amount_line_tax(cr, uid, line, context=context)
             # res[order.id]['amount_tax'] = cur_obj.round(cr, uid, cur, val)
+            res[order.id]['amount_untaxed'] = cur_obj.round(cr, uid, cur, val1)
             tax = 0.1 * res[order.id]['amount_untaxed']
             tax = float(int(tax))
             res[order.id]['amount_tax'] = tax
-            res[order.id]['amount_untaxed'] = cur_obj.round(cr, uid, cur, val1)
             res[order.id]['amount_total'] = res[order.id]['amount_untaxed'] \
                 + res[order.id]['amount_tax']
         return res
