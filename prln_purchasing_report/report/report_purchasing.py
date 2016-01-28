@@ -108,21 +108,24 @@ class Parser(report_sxw.rml_parse):
         return sub_total
 
     def get_ppn(self, line_id):
+        lst_tax = []
         ppn = 'x'
 
         obj_user = self.pool.get('res.users')
         user = obj_user.browse(self.cr, self.uid, [self.uid])[0]
 
-        tax_ids = user.company_id.tax_ids
+        for tax in user.company_id.tax_ids:
+            if tax.id:
+                lst_tax.append(tax.id)
 
-        if tax_ids:
+        if lst_tax:
             self.cr.execute("""\
                 SELECT  ord_id AS ord_id,
                         tax_id AS tax_id
                 FROM    purchase_order_taxe
                 WHERE   ord_id=%s AND
                         tax_id IN %s
-                """, (line_id, tuple(user.company_id.tax_ids)))
+                """, (line_id, tuple(lst_tax),))
             if self.cr.dictfetchall():
                 ppn = 'v'
 
