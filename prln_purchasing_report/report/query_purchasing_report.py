@@ -140,8 +140,6 @@ class pralon_query_purchasing_report(osv.osv):
                                         D1.product_qty,
                                         D1.product_uom
                                     FROM    stock_move D1
-                                    WHERE   D1.picking_id IS NOT NULL AND
-                                        D1.state = 'done'
                                 )AS D ON A.id = D.purchase_line_id
                         LEFT JOIN   stock_picking AS E
                                     ON D.picking_id=E.id
@@ -152,7 +150,7 @@ class pralon_query_purchasing_report(osv.osv):
                         JOIN    product_uom AS H
                                 ON D.product_uom=H.id
                         WHERE   (B.state not in ('draft','cancel'))
-                        ORDER BY pr_no DESC
+                        ORDER BY pr_no, picking_id
                     )
                     """
         cr.execute(strSQL)

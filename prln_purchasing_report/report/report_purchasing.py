@@ -465,12 +465,21 @@ class Parser(report_sxw.rml_parse):
                     po_date, '%Y-%m-%d').strftime('%d/%m/%Y')
 
                 is_date = line.picking_id.date_done
-                conv_is_date = datetime.strptime(
-                    is_date, '%Y-%m-%d %H:%M:%S').strftime(
-                        '%d/%m/%Y')
+                if is_date:
+                    conv_is_date = datetime.strptime(
+                        is_date, '%Y-%m-%d %H:%M:%S').strftime(
+                            '%d/%m/%Y')
+                else:
+                    conv_is_date = '-'
+                    po_is = line.po_qty
 
                 if count_data == 0:
-                    po_is -= line.is_qty
+                    if conv_is_date == '-':
+                        po_is = line.po_qty
+                        is_qty = 0
+                    else:
+                        po_is -= line.is_qty
+                        is_qty = line.is_qty
                     dict_lines = {
                         'department': line.department_id.name,
                         'pr_no': line.pr_no,
@@ -484,11 +493,11 @@ class Parser(report_sxw.rml_parse):
                         'po_is': po_is,
                         'unit_price': line.unit_price,
                         'symbol': line.symbol,
-                        'ppn': self.get_ppn(line.id),
-                        'total': self.get_subtotal(line.line_id.id),
+                        'ppn': self.get_ppn(lines_id),
+                        'total': self.get_subtotal(lines_id),
                         'is_no': line.picking_id.name,
                         'is_date': conv_is_date,
-                        'is_qty': line.is_qty,
+                        'is_qty': is_qty,
                         'is_uom_name': line.is_uom_name,
                         'warehouse': line.warehouse_id.code,
                         'status': 'line'
@@ -509,8 +518,8 @@ class Parser(report_sxw.rml_parse):
                         'po_is': po_is,
                         'unit_price': line.unit_price,
                         'symbol': line.symbol,
-                        'ppn': self.get_ppn(line.id),
-                        'total': self.get_subtotal(line.line_id.id),
+                        'ppn': self.get_ppn(lines_id),
+                        'total': self.get_subtotal(lines_id),
                         'is_no': line.picking_id.name,
                         'is_date': conv_is_date,
                         'is_qty': line.is_qty,
