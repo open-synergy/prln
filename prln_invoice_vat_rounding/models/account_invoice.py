@@ -7,9 +7,9 @@ class account_invoice(osv.osv):
     _name = 'account.invoice'
     _inherit = 'account.invoice'
 
-    def buton_reset_taxes(self, cr, uid, ids, context=None):
+    def button_reset_taxes(self, cr, uid, ids, context=None):
 
-        super(account_invoice, self).button_reset(cr, uid, ids, context)
+        super(account_invoice, self).button_reset_taxes(cr, uid, ids, context)
         for invoice in self.browse(cr, uid, ids):
             if invoice.type != 'out_invoice':
                 return True
