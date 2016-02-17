@@ -25,6 +25,7 @@ class account_invoice(osv.osv):
                 ctx.update({'lang': partner.lang})
             for taxe in ait_obj.compute(cr, uid, invoice.id, context=ctx).values():
                 taxe['base'] = invoice.amount_untaxed
+                taxe['amount'] = float(int(0.1 * invoice.amount_untaxed))
                 ait_obj.create(cr, uid, taxe)
             # Update the stored value (fields.function), so we write to trigger recompute
             self.pool.get('account.invoice').write(cr, uid, ids, {'invoice_line':[]}, context=ctx)
