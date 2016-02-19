@@ -98,3 +98,25 @@ class sale_order(osv.osv):
             multi='sums',
             help="The total amount."),
         }
+
+class sale_order_line(osv.osv):
+    _name = 'sale.order.line'
+    _inherit = 'sale.order.line'
+
+    def _amount_line(self, cr, uid, ids, field_name, arg, context=None):
+        tax_obj = self.pool.get('account.tax')
+        cur_obj = self.pool.get('res.currency')
+        res = {}
+        if context is None:
+            context = {}
+        for line in self.browse(cr, uid, ids, context=context):
+            price = line.price_unit * (1 - (line.discount or 0.0) / 100.0)
+            # taxes = tax_obj.compute_all(cr, uid, line.tax_id, price, line.product_uom_qty, line.order_id.partner_invoice_id.id, line.product_id, line.order_id.partner_id)
+            taxes = tax_obj.compute_all(cr, uid, line.tax_id, price, 1.0, line.order_id.partner_invoice_id.id, line.product_id, line.order_id.partner_id)
+            cur = line.order_id.pricelist_id.currency_id
+            res[line.id] = cur_obj.round(cr, uid, cur, taxes['total'] * line.product_uom.qty)
+        return res
+
+    _columns = {
+        'price_subtotal': fields.function(_amount_line, string='Subtotal', digits_compute= dp.get_precision('Sale Price')),
+        }
