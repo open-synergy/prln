@@ -2,6 +2,7 @@
 
 from osv import osv
 from tools.translate import _
+import decimal_precision as dp
 
 
 class account_invoice(osv.osv):
@@ -51,3 +52,26 @@ class account_invoice(osv.osv):
             for key in compute_taxes:
                 if not key in tax_key:
                     raise osv.except_osv(_('Warning !'), _('Taxes are missing!\nClick on compute button.'))
+
+class account_invoice_line(osv.osv):
+    _name = 'account.invoice.line'
+    _inherit = 'account.invoice.line'
+
+    def _amount_line(self, cr, uid, ids, prop, unknow_none, unknow_dict):
+        res = {}
+        tax_obj = self.pool.get('account.tax')
+        cur_obj = self.pool.get('res.currency')
+        for line in self.browse(cr, uid, ids):
+            price = line.price_unit * (1-(line.discount or 0.0)/100.0)
+            taxes = tax_obj.compute_all(cr, uid, line.invoice_line_tax_id, price, 1.0, product=line.product_id, address_id=line.invoice_id.address_invoice_id, partner=line.invoice_id.partner_id)
+            # taxes = tax_obj.compute_all(cr, uid, line.invoice_line_tax_id, price, line.quantity, product=line.product_id, address_id=line.invoice_id.address_invoice_id, partner=line.invoice_id.partner_id)
+            res[line.id] = taxes['total'] * line.quantity
+            # if line.invoice_id:
+            #     cur = line.invoice_id.currency_id
+            #     res[line.id] = cur_obj.round(cr, uid, cur, res[line.id])
+        return res
+
+    _columns = {
+        'price_subtotal': fields.function(_amount_line, string='Subtotal', type="float",
+            digits_compute= dp.get_precision('Account'), store=True),
+    }
