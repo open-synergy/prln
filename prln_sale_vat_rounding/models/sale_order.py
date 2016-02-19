@@ -114,8 +114,8 @@ class sale_order_line(osv.osv):
             # taxes = tax_obj.compute_all(cr, uid, line.tax_id, price, line.product_uom_qty, line.order_id.partner_invoice_id.id, line.product_id, line.order_id.partner_id)
             taxes = tax_obj.compute_all(cr, uid, line.tax_id, price, 1.0, line.order_id.partner_invoice_id.id, line.product_id, line.order_id.partner_id)
             # cur = line.order_id.pricelist_id.currency_id
-            # res[line.id] = taxes['total'] * line.product_uom_qty
-            res[line.id] = taxes['total']
+            res[line.id] = taxes['total'] * line.product_uom_qty
+            # res[line.id] = taxes['total']
             # res[line.id] = cur_obj.round(cr, uid, cur, taxes['total'] * line.product_uom_qty)
         return res
 
