@@ -3,6 +3,7 @@
 from osv import osv, fields
 from tools.translate import _
 import decimal_precision as dp
+from datetime import time
 
 
 class account_invoice(osv.osv):
@@ -61,6 +62,31 @@ class account_invoice(osv.osv):
             },
             multi='all'),
         }
+
+    def compute_invoice_totals(self, cr, uid, inv, company_currency, ref, invoice_move_lines):
+        total = 0
+        total_currency = 0
+        cur_obj = self.pool.get('res.currency')
+        for i in invoice_move_lines:
+            if inv.currency_id.id != company_currency:
+                i['currency_id'] = inv.currency_id.id
+                i['amount_currency'] = i['price']
+                i['price'] = cur_obj.compute(cr, uid, inv.currency_id.id,
+                        company_currency, i['price'],
+                        context={'date': inv.date_invoice or time.strftime('%Y-%m-%d')})
+            else:
+                i['amount_currency'] = False
+                i['currency_id'] = False
+            i['ref'] = ref
+            if inv.type in ('out_invoice','in_refund'):
+                total += i['price']
+                total_currency += i['amount_currency'] or i['price']
+                i['price'] = - i['price']
+            else:
+                total -= i['price']
+                total_currency -= i['amount_currency'] or i['price']
+        total = float(int(total))
+        return total, total_currency, invoice_move_lines
 
     def button_reset_taxes(self, cr, uid, ids, context=None):
 
