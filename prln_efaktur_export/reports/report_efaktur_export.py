@@ -164,5 +164,8 @@ class Parser(report_sxw.rml_parse):
                     data['jumlah_ppn'].quantize(
                         Decimal('1.'), rounding=ROUND_DOWN))
 
+                data['jumlah_dpp'] = Decimal(
+                    data['jumlah_dpp'].quantize(
+                        Decimal('1.'), rounding=ROUND_DOWN))
             self.lines.append(data)
         return self.lines
