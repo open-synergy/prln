@@ -24,7 +24,7 @@ class account_invoice(osv.osv):
                 res[invoice.id]['amount_tax'] += line.amount
 
             # eTax adjustment
-            res[invoice.id]['amount_untaxed'] = float(int(res[invoice.id]['amount_untaxed']))
+            # res[invoice.id]['amount_untaxed'] = float(int(res[invoice.id]['amount_untaxed']))
 
             res[invoice.id]['amount_total'] = res[invoice.id]['amount_tax'] + res[invoice.id]['amount_untaxed']
         return res
