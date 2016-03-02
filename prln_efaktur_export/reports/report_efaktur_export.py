@@ -137,7 +137,7 @@ class Parser(report_sxw.rml_parse):
                     ppn = dpp * Decimal(0.1)
                     ppn = Decimal(
                         ppn.quantize(
-                            Decimal('.01'), rounding=ROUND_HALF_EVEN))
+                            Decimal('.001'), rounding=ROUND_HALF_EVEN))
 
                     data['jumlah_ppn'] += ppn
 
