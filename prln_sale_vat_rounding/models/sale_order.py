@@ -38,6 +38,7 @@ class sale_order(osv.osv):
             # res[order.id]['amount_tax'] = cur_obj.round(cr, uid, cur, val)
             # res[order.id]['amount_untaxed'] = cur_obj.round(cr, uid, cur, val1)
             # res[order.id]['amount_untaxed'] = float(int(val1))
+            res[order.id]['amount_untaxed'] = val1
             if vat:
                 tax = 0.1 * res[order.id]['amount_untaxed']
                 tax = float(int(tax))
