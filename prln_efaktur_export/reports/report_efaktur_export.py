@@ -134,6 +134,9 @@ class Parser(report_sxw.rml_parse):
                         amount_discount.quantize(
                             Decimal('.01'), rounding=ROUND_HALF_EVEN))
                     dpp = price_subtotal
+                    dpp = Decimal(
+                        dpp.quantize(
+                            Decimal('.01'), rounding=ROUND_HALF_EVEN))
                     ppn = dpp * Decimal(0.1)
                     ppn = Decimal(
                         ppn.quantize(
