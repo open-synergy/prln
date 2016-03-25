@@ -9,7 +9,7 @@
             <field name="inherit_id" ref="account.invoice_form"/>
             <field name="arch" type="xml">
                 <data>
-                    <xpath expr="//field[@name='amount_untaxed']" position="before">
+                    <xpath expr="//button[@name='button_reset_taxes']" position="before">
                         <label string="" colspan="2"/>
                         <field name="amount_base"/>
                         <label string="" colspan="2"/>
