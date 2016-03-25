@@ -2,7 +2,7 @@
     <data>
 
         <record id="form_prln_soVatRounding" model="ir.ui.view">
-            <field name="name">Sale Order - VAT Rounding</field>
+            <field name="name">Form Sale Order - VAT Rounding 1</field>
             <field name="model">sale.order</field>
             <field name="type">form</field>
             <field name="inherit_id" ref="pralon_sale_enhancements.form_saleEnhancement_saleOrder"/>
@@ -17,6 +17,21 @@
                     <xpath expr="//field[@name='order_line']/tree/field[@name='discount']" position="after">
                         <field name="discount_amount"/>
                         <field name="discount_amount_total"/>
+                    </xpath>
+                </data>
+            </field>
+        </record>
+
+        <record id="form_prln_soVatRounding2" model="ir.ui.view">
+            <field name="name">Form Sale Order - VAT Rounding 1</field>
+            <field name="model">sale.order</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="sale.view_order_form"/>
+            <field name="arch" type="xml">
+                <data>
+                    <xpath expr="//field[@name='amount_untaxed']" position="before">
+                        <field name="amount_base"/>
+                        <field name="amount_discount"/>
                     </xpath>
                 </data>
             </field>

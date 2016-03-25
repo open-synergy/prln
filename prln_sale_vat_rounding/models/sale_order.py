@@ -19,26 +19,25 @@ class sale_order(osv.osv):
         return val
 
     def _amount_all(self, cr, uid, ids, field_name, arg, context=None):
-        cur_obj = self.pool.get('res.currency')
         res = {}
         for order in self.browse(cr, uid, ids, context=context):
             res[order.id] = {
                 'amount_untaxed': 0.0,
                 'amount_tax': 0.0,
                 'amount_total': 0.0,
+                'amount_base': 0.0,
+                'amount_discount': 0.0,
             }
             val = val1 = tax = 0.0
-            cur = order.pricelist_id.currency_id
             vat = False
             for line in order.order_line:
                 val1 += line.price_subtotal
                 val += self._amount_line_tax(cr, uid, line, context=context)
                 if self._amount_line_tax(cr, uid, line, context) >= 0.0:
                     vat = True
-            # res[order.id]['amount_tax'] = cur_obj.round(cr, uid, cur, val)
-            # res[order.id]['amount_untaxed'] = cur_obj.round(cr, uid, cur, val1)
-            # res[order.id]['amount_untaxed'] = float(int(val1))
             res[order.id]['amount_untaxed'] = val1
+            res[order.id]['amount_base'] += line.price_subtotal_base
+            res[order.id]['amount_discount'] += line.discount_amount_total
             if vat:
                 tax = 0.1 * res[order.id]['amount_untaxed']
                 tax = float(int(tax))
@@ -99,6 +98,20 @@ class sale_order(osv.osv):
                 },
             multi='sums',
             help="The total amount."),
+        'amount_base': fields.function(
+            fnct=_amount_all,
+            digits_compute=dp.get_precision('Sale Price'),
+            string='Base',
+            store=False,
+            multi='sums',
+            ),
+        'amount_discount': fields.function(
+            fnct=_amount_all,
+            digits_compute=dp.get_precision('Sale Price'),
+            string='Discount',
+            store=False,
+            multi='sums',
+            ),
         }
 
 class sale_order_line(osv.osv):
