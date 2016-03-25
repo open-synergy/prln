@@ -13,8 +13,8 @@
                         <field name="price_unit_base"/>
                     </xpath>
                     <xpath expr="//field[@name='discount']" position="after">
-                        <field name="discount_amount_base"/>
                         <field name="discount_amount"/>
+                        <field name="discount_amount_total"/>
                     </xpath>
                 </data>
             </field>
