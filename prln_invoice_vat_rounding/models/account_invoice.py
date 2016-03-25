@@ -148,6 +148,7 @@ class account_invoice_line(osv.osv):
             type='float',
             digits_compute=dp.get_precision('Account'), 
             store=False,
+            multi='subtotal',
             ),
         'discount_amount': fields.function(
             _amount_line, 
@@ -155,6 +156,7 @@ class account_invoice_line(osv.osv):
             type='float',
             digits_compute=dp.get_precision('Account'), 
             store=False,
+            multi='subtotal',
             ),
         'discount_amount_total': fields.function(
             _amount_line, 
@@ -162,6 +164,7 @@ class account_invoice_line(osv.osv):
             type='float',
             digits_compute=dp.get_precision('Account'), 
             store=False,
+            multi='subtotal',
             ),
         'price_subtotal': fields.function(
             _amount_line, 
@@ -169,5 +172,6 @@ class account_invoice_line(osv.osv):
             type='float',
             digits_compute=dp.get_precision('Account'), 
             store=True,
+            multi='subtotal',
             ),
     }
