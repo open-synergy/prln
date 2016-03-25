@@ -3,7 +3,6 @@
 from osv import osv, fields
 from tools.translate import _
 import decimal_precision as dp
-from datetime import time
 
 
 class account_invoice(osv.osv):
@@ -120,18 +119,55 @@ class account_invoice_line(osv.osv):
     def _amount_line(self, cr, uid, ids, prop, unknow_none, unknow_dict):
         res = {}
         tax_obj = self.pool.get('account.tax')
-        cur_obj = self.pool.get('res.currency')
+        # cur_obj = self.pool.get('res.currency')
         for line in self.browse(cr, uid, ids):
+            res[line.id] = {
+                'price_unit_base': 0.0,
+                'discount_amount': 0.0,
+                'discount_amount_total': 0.0,
+                'price_subtotal': 0.0,
+                }
+
             price = line.price_unit * (1-(line.discount or 0.0)/100.0)
-            taxes = tax_obj.compute_all(cr, uid, line.invoice_line_tax_id, price, 1.0, product=line.product_id, address_id=line.invoice_id.address_invoice_id, partner=line.invoice_id.partner_id)
+            taxes = tax_obj.compute_all(
+                cr, uid, line.invoice_line_tax_id, 
+                price, 1.0, product=line.product_id, 
+                address_id=line.invoice_id.address_invoice_id, 
+                partner=line.invoice_id.partner_id)
             # taxes = tax_obj.compute_all(cr, uid, line.invoice_line_tax_id, price, line.quantity, product=line.product_id, address_id=line.invoice_id.address_invoice_id, partner=line.invoice_id.partner_id)
-            res[line.id] = taxes['total'] * line.quantity
+            res[line.id]['price_subtotal'] = taxes['total'] * line.quantity
             # if line.invoice_id:
             #     cur = line.invoice_id.currency_id
             #     res[line.id] = cur_obj.round(cr, uid, cur, res[line.id])
         return res
 
     _columns = {
-        'price_subtotal': fields.function(_amount_line, string='Subtotal', type="float",
-            digits_compute= dp.get_precision('Account'), store=True),
+        'price_unit_base': fields.function(
+            fnct=_amount_line, 
+            string='Base Unit Price', 
+            type='float',
+            digits_compute=dp.get_precision('Account'), 
+            store=False,
+            ),
+        'discount_amount': fields.function(
+            fnct=_amount_line, 
+            string='Amount Disc Per Unit', 
+            type='float',
+            digits_compute=dp.get_precision('Account'), 
+            store=False,
+            ),
+        'discount_amount_total': fields.function(
+            fnct=_amount_line, 
+            string='Amount Disc', 
+            type='float',
+            digits_compute=dp.get_precision('Account'), 
+            store=False,
+            ),
+        'price_subtotal': fields.function(
+            fnct=_amount_line, 
+            string='Subtotal', 
+            type='float',
+            digits_compute=dp.get_precision('Account'), 
+            store=True,
+            ),
     }

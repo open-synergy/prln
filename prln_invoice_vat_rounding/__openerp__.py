@@ -31,6 +31,7 @@
     """,
     'website': 'http://opensynergy-indonesia.com',
     'data': [
+        'views/account_invoice_views.xml',
     ],
     'demo': [],
     'installable': True,

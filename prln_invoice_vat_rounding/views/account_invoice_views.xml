@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <record id="tree_invoice_etax" model="ir.ui.view">
+            <field name="name">Invoice line etax addition</field>
+            <field name="model">account.invoice.line</field>
+            <field name="inherit_id" ref="account.view_invoice_line_tree"/>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <data>
+                    <xpath expr="//field[@name='quantity']" position="before">
+                        <field name="price_unit_base"/>
+                    </xpath>
+                    <xpath expr="//field[@name='discount']" position="after">
+                        <field name="discount_amount_base"/>
+                        <field name="discount_amount"/>
+                    </xpath>
+                </data>
+            </field>
+        </record>
+
+    </data>
+</openerp>
