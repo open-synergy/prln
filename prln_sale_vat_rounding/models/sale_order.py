@@ -35,9 +35,9 @@ class sale_order(osv.osv):
                 val += self._amount_line_tax(cr, uid, line, context=context)
                 if self._amount_line_tax(cr, uid, line, context) >= 0.0:
                     vat = True
+                res[order.id]['amount_base'] += line.price_subtotal_base
+                res[order.id]['amount_discount'] += line.discount_amount_total
             res[order.id]['amount_untaxed'] = val1
-            res[order.id]['amount_base'] += line.price_subtotal_base
-            res[order.id]['amount_discount'] += line.discount_amount_total
             if vat:
                 tax = 0.1 * res[order.id]['amount_untaxed']
                 tax = float(int(tax))
