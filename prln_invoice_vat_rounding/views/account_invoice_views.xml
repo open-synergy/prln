@@ -2,6 +2,22 @@
 <openerp>
     <data>
 
+        <record id="form_invoice_etax" model="ir.ui.view">
+            <field name="name">Form invoice etax addition</field>
+            <field name="model">account.invoice</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="account.invoice_form"/>
+            <field name="arch" type="xml">
+                <data>
+                    <xpath expr="//field[@name='amount_untaxed']" position="before">
+                        <label string="" colspan="2"/>
+                        <field name="amount_base"/>
+                        <label string="" colspan="2"/>
+                        <field name="amount_discount"/>
+                    </xpath>
+                </data>
+            </field>
+        </record>
         <record id="tree_invoice_etax" model="ir.ui.view">
             <field name="name">Invoice line etax addition</field>
             <field name="model">account.invoice.line</field>
