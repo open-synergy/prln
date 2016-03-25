@@ -137,7 +137,7 @@ class account_invoice_line(osv.osv):
             # taxes = tax_obj.compute_all(cr, uid, line.invoice_line_tax_id, price, line.quantity, product=line.product_id, address_id=line.invoice_id.address_invoice_id, partner=line.invoice_id.partner_id)
             res[line.id]['price_unit_base'] = taxes['total'] + ((line.discount/100.00) * taxes['total'])
             res[line.id]['price_subtotal'] = taxes['total'] * line.quantity
-            res[line.id]['discount_amount'] = (line.discount) * taxes['total']
+            res[line.id]['discount_amount'] = (line.discount/100.00) * taxes['total']
             res[line.id]['discount_amount_total'] = res[line.id]['discount_amount'] * line.quantity
 
             # if line.invoice_id:
