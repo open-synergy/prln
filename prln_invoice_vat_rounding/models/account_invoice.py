@@ -143,28 +143,28 @@ class account_invoice_line(osv.osv):
 
     _columns = {
         'price_unit_base': fields.function(
-            fnct=_amount_line, 
+            _amount_line, 
             string='Base Unit Price', 
             type='float',
             digits_compute=dp.get_precision('Account'), 
             store=False,
             ),
         'discount_amount': fields.function(
-            fnct=_amount_line, 
+            _amount_line, 
             string='Amount Disc Per Unit', 
             type='float',
             digits_compute=dp.get_precision('Account'), 
             store=False,
             ),
         'discount_amount_total': fields.function(
-            fnct=_amount_line, 
+            _amount_line, 
             string='Amount Disc', 
             type='float',
             digits_compute=dp.get_precision('Account'), 
             store=False,
             ),
         'price_subtotal': fields.function(
-            fnct=_amount_line, 
+            _amount_line, 
             string='Subtotal', 
             type='float',
             digits_compute=dp.get_precision('Account'), 
