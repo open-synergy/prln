@@ -126,6 +126,7 @@ class account_invoice_line(osv.osv):
                 'discount_amount': 0.0,
                 'discount_amount_total': 0.0,
                 'price_subtotal': 0.0,
+                'price_subtotal_base': 0.0,
                 }
 
             price = line.price_unit * (1-(line.discount or 0.0)/100.0)
@@ -136,6 +137,7 @@ class account_invoice_line(osv.osv):
                 partner=line.invoice_id.partner_id)
             # taxes = tax_obj.compute_all(cr, uid, line.invoice_line_tax_id, price, line.quantity, product=line.product_id, address_id=line.invoice_id.address_invoice_id, partner=line.invoice_id.partner_id)
             res[line.id]['price_unit_base'] = taxes['total'] * (100.00/(100.00-line.discount))
+            res[line.id]['price_subtotal_base'] = res[line.id]['price_unit_base'] * line.quantity
             res[line.id]['price_subtotal'] = taxes['total'] * line.quantity
             res[line.id]['discount_amount'] = res[line.id]['price_unit_base'] - taxes['total']
             res[line.id]['discount_amount_total'] = res[line.id]['discount_amount'] * line.quantity
@@ -149,6 +151,14 @@ class account_invoice_line(osv.osv):
         'price_unit_base': fields.function(
             _amount_line, 
             string='Base Unit Price', 
+            type='float',
+            digits_compute=dp.get_precision('Account'), 
+            store=False,
+            multi='subtotal',
+            ),
+        'price_subtotal_base': fields.function(
+            _amount_line, 
+            string='Base Subtotal', 
             type='float',
             digits_compute=dp.get_precision('Account'), 
             store=False,

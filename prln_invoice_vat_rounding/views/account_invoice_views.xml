@@ -16,6 +16,9 @@
                         <field name="discount_amount"/>
                         <field name="discount_amount_total"/>
                     </xpath>
+                    <xpath expr="//field[@name='uos_id']" position="after">
+                        <field name="price_subtotal_base"/>
+                    </xpath>
                 </data>
             </field>
         </record>
