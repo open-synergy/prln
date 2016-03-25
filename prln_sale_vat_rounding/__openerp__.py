@@ -25,7 +25,7 @@
     'license': 'AGPL-3',
     'category': 'Sale',
     'depends': [
-        'sale',
+        'pralon_sale_enhancements',
         'prln_invoice_vat_rounding'
     ],
     'description': """

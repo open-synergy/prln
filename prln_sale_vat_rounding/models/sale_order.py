@@ -125,6 +125,11 @@ class sale_order_line(osv.osv):
                 line.order_id.partner_invoice_id.id, 
                 line.product_id, line.order_id.partner_id)
             res[line.id]['price_subtotal'] = taxes['total'] * line.product_uom_qty
+            res[line.id]['price_unit_base'] = taxes['total'] * (100.00/(100.00-line.discount))
+            res[line.id]['price_subtotal_base'] = res[line.id]['price_unit_base'] * line.product_uom_qty
+            res[line.id]['price_subtotal'] = taxes['total'] * line.product_uom_qty
+            res[line.id]['discount_amount'] = res[line.id]['price_unit_base'] - taxes['total']
+            res[line.id]['discount_amount_total'] = res[line.id]['discount_amount'] * line.product_uom_qty
         return res
 
     _columns = {

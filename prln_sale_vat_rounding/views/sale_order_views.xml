@@ -5,10 +5,10 @@
             <field name="name">Sale Order - VAT Rounding</field>
             <field name="model">sale.order</field>
             <field name="type">form</field>
-            <field name="inherit_id" ref="sale.view_order_form"/>
+            <field name="inherit_id" ref="pralon_sale_enhancement.form_saleEnhancement_saleOrder"/>
             <field name="arch" type="xml">
                 <data>
-                    <xpath expr="//field[@name='order_line']/tree/field[@name='product_uom_qty']" position="after">
+                    <xpath expr="//field[@name='order_line']/tree/field[@name='product_uom_qty']" position="before">
                         <field name="price_unit_base"/>
                     </xpath>
                     <xpath expr="//field[@name='order_line']/tree/field[@name='product_uos']" position="after">
