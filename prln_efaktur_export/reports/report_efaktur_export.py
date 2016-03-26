@@ -15,8 +15,8 @@ class Parser(report_sxw.rml_parse):
         self.localcontext.update(
             {
                 'get_lines': self.get_lines
-                }
-            )
+            }
+        )
 
     def get_lines(self):
         pool = self.pool
@@ -51,7 +51,7 @@ class Parser(report_sxw.rml_parse):
                 address.city or '-',
                 address.state_id and address.state_id.name or '-',
                 address.zip or ''
-                )
+            )
 
             partner_zip = o.partner_address_id.zip
             partner_phone = o.partner_address_id.phone
@@ -88,7 +88,7 @@ class Parser(report_sxw.rml_parse):
                 'partner_zip': partner_zip or '-',
                 'partner_phone': partner_phone or '-',
                 'details_lt': [],
-                }
+            }
 
             if o.taxform_line:
                 for detail in o.taxform_line:
@@ -144,7 +144,7 @@ class Parser(report_sxw.rml_parse):
                         'ppn': ppn,
                         'tarif_ppnbm': 0,
                         'ppnbm': 0
-                        }
+                    }
                     data['details_lt'].append(data1)
 
                 data['jumlah_ppn'] = Decimal(

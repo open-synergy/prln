@@ -22,7 +22,7 @@ class account_invoice_tax(osv.osv):
         for line in inv.invoice_line:
             for tax in tax_obj.compute_all(
                     cr, uid, line.invoice_line_tax_id,
-                    (line.price_unit * (1-(line.discount or 0.0)/100.0)),
+                    (line.price_unit * (1 - (line.discount or 0.0) / 100.0)),
                     line.quantity, inv.address_invoice_id.id,
                     line.product_id, inv.partner_id)['taxes']:
                 if inv.type in ('in_invoice', 'in_refund'):

@@ -67,4 +67,4 @@ class account_taxform(osv.osv):
                     'taxform_line'], 20),
             },
             multi='all'),
-        }
+    }

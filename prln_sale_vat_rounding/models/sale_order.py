@@ -14,7 +14,7 @@ class sale_order(osv.osv):
         val = 0.0
         for c in self.pool.get('account.tax').compute_all(
                 cr, uid, line.tax_id,
-                line.price_unit * (1-(line.discount or 0.0)/100.0),
+                line.price_unit * (1 - (line.discount or 0.0) / 100.0),
                 line.product_uom_qty, line.order_id.partner_invoice_id.id,
                 line.product_id, line.order_id.partner_id)['taxes']:
             val += c.get('amount', 0.0)
@@ -66,11 +66,11 @@ class sale_order(osv.osv):
                 'sale.order.line': (_get_order, [
                     'price_unit', 'tax_id', 'discount',
                     'product_uom_qty',
-                    ], 10),
-                },
+                ], 10),
+            },
             multi='sums',
             help="The amount without tax.",
-            ),
+        ),
         'amount_tax': fields.function(
             fnct=_amount_all,
             digits_compute=dp.get_precision('Sale Price'),
@@ -81,11 +81,11 @@ class sale_order(osv.osv):
                 'sale.order.line': (_get_order, [
                     'price_unit', 'tax_id',
                     'discount', 'product_uom_qty',
-                    ], 10),
-                },
+                ], 10),
+            },
             multi='sums',
             help="The tax amount.",
-            ),
+        ),
         'amount_total': fields.function(
             fnct=_amount_all,
             digits_compute=dp.get_precision('Sale Price'),
@@ -96,8 +96,8 @@ class sale_order(osv.osv):
                 'sale.order.line': (_get_order, [
                     'price_unit', 'tax_id',
                     'discount', 'product_uom_qty',
-                    ], 10),
-                },
+                ], 10),
+            },
             multi='sums',
             help="The total amount."),
         'amount_base': fields.function(
@@ -106,15 +106,16 @@ class sale_order(osv.osv):
             string='Base',
             store=False,
             multi='sums',
-            ),
+        ),
         'amount_discount': fields.function(
             fnct=_amount_all,
             digits_compute=dp.get_precision('Sale Price'),
             string='Discount',
             store=False,
             multi='sums',
-            ),
-        }
+        ),
+    }
+
 
 class sale_order_line(osv.osv):
     _name = 'sale.order.line'
@@ -132,55 +133,61 @@ class sale_order_line(osv.osv):
                 'discount_amount': 0.0,
                 'discount_amount_total': 0.0,
                 'price_subtotal_base': 0.0,
-                }
+            }
 
             price = line.price_unit * (1 - (line.discount or 0.0) / 100.0)
             taxes = tax_obj.compute_all(
-                cr, uid, line.tax_id, price, 1.0, 
-                line.order_id.partner_invoice_id.id, 
+                cr, uid, line.tax_id, price, 1.0,
+                line.order_id.partner_invoice_id.id,
                 line.product_id, line.order_id.partner_id)
-            res[line.id]['price_subtotal'] = taxes['total'] * line.product_uom_qty
-            res[line.id]['price_unit_base'] = taxes['total'] * (100.00/(100.00-line.discount))
-            res[line.id]['price_subtotal_base'] = res[line.id]['price_unit_base'] * line.product_uom_qty
-            res[line.id]['price_subtotal'] = taxes['total'] * line.product_uom_qty
-            res[line.id]['discount_amount'] = res[line.id]['price_unit_base'] - taxes['total']
-            res[line.id]['discount_amount_total'] = res[line.id]['discount_amount'] * line.product_uom_qty
+            res[line.id]['price_subtotal'] = taxes[
+                'total'] * line.product_uom_qty
+            res[line.id]['price_unit_base'] = taxes[
+                'total'] * (100.00 / (100.00 - line.discount))
+            res[line.id]['price_subtotal_base'] = res[line.id][
+                'price_unit_base'] * line.product_uom_qty
+            res[line.id]['price_subtotal'] = taxes[
+                'total'] * line.product_uom_qty
+            res[line.id]['discount_amount'] = res[line.id][
+                'price_unit_base'] - taxes['total']
+            res[line.id]['discount_amount_total'] = res[line.id][
+                'discount_amount'] * line.product_uom_qty
         return res
 
     _columns = {
         'price_subtotal': fields.function(
-            fnct=_amount_line, 
-            string='Subtotal', 
-            digits_compute= dp.get_precision('Sale Price'),
+            fnct=_amount_line,
+            string='Subtotal',
+            digits_compute=dp.get_precision('Sale Price'),
             store=False,
             multi='subtotal',
-            ),
+        ),
         'price_unit_base': fields.function(
-            fnct=_amount_line, 
-            string='Base Unit Price', 
-            digits_compute= dp.get_precision('Sale Price'),
+            fnct=_amount_line,
+            string='Base Unit Price',
+            digits_compute=dp.get_precision('Sale Price'),
             store=False,
             multi='subtotal',
-            ),
+        ),
         'discount_amount': fields.function(
-            fnct=_amount_line, 
-            string='Amount Disc Per Unit', 
-            digits_compute= dp.get_precision('Sale Price'),
+            fnct=_amount_line,
+            string='Amount Disc Per Unit',
+            digits_compute=dp.get_precision('Sale Price'),
             store=False,
             multi='subtotal',
-            ),
+        ),
         'discount_amount_total': fields.function(
-            fnct=_amount_line, 
-            string='Amount Disc', 
-            digits_compute= dp.get_precision('Sale Price'),
+            fnct=_amount_line,
+            string='Amount Disc',
+            digits_compute=dp.get_precision('Sale Price'),
             store=False,
             multi='subtotal',
-            ),
+        ),
         'price_subtotal_base': fields.function(
-            fnct=_amount_line, 
-            string='Base Subtotal', 
-            digits_compute= dp.get_precision('Sale Price'),
+            fnct=_amount_line,
+            string='Base Subtotal',
+            digits_compute=dp.get_precision('Sale Price'),
             store=False,
             multi='subtotal',
-            ),
-        }
+        ),
+    }

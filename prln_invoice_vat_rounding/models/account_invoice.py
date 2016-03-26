@@ -31,7 +31,8 @@ class account_invoice(osv.osv):
             # eTax adjustment
             # res[invoice.id]['amount_untaxed'] = float(int(res[invoice.id]['amount_untaxed']))
 
-            res[invoice.id]['amount_total'] = res[invoice.id]['amount_tax'] + res[invoice.id]['amount_untaxed']
+            res[invoice.id]['amount_total'] = res[invoice.id][
+                'amount_tax'] + res[invoice.id]['amount_untaxed']
         return res
 
     def _get_invoice_line(self, cr, uid, ids, context=None):
@@ -47,52 +48,49 @@ class account_invoice(osv.osv):
         return result.keys()
 
     _columns = {
-
         'amount_untaxed': fields.function(
-            _amount_all, 
-            digits_compute=dp.get_precision('Account'), 
+            _amount_all,
+            digits_compute=dp.get_precision('Account'),
             string='Untaxed',
             store={
                 'account.invoice': (lambda self, cr, uid, ids, c={}: ids, ['invoice_line'], 20),
                 'account.invoice.tax': (_get_invoice_tax, None, 20),
-                'account.invoice.line': (_get_invoice_line, ['price_unit','invoice_line_tax_id','quantity','discount','invoice_id'], 20),
+                'account.invoice.line': (_get_invoice_line, ['price_unit', 'invoice_line_tax_id', 'quantity', 'discount', 'invoice_id'], 20),
             },
             multi='all'),
         'amount_tax': fields.function(
-            _amount_all, 
-            digits_compute=dp.get_precision('Account'), 
+            _amount_all,
+            digits_compute=dp.get_precision('Account'),
             string='Tax',
             store={
                 'account.invoice': (lambda self, cr, uid, ids, c={}: ids, ['invoice_line'], 20),
                 'account.invoice.tax': (_get_invoice_tax, None, 20),
-                'account.invoice.line': (_get_invoice_line, ['price_unit','invoice_line_tax_id','quantity','discount','invoice_id'], 20),
+                'account.invoice.line': (_get_invoice_line, ['price_unit', 'invoice_line_tax_id', 'quantity', 'discount', 'invoice_id'], 20),
             },
             multi='all'),
         'amount_total': fields.function(
-            _amount_all, 
-            digits_compute=dp.get_precision('Account'), 
+            _amount_all,
+            digits_compute=dp.get_precision('Account'),
             string='Total',
             store={
                 'account.invoice': (lambda self, cr, uid, ids, c={}: ids, ['invoice_line'], 20),
                 'account.invoice.tax': (_get_invoice_tax, None, 20),
-                'account.invoice.line': (_get_invoice_line, ['price_unit','invoice_line_tax_id','quantity','discount','invoice_id'], 20),
+                'account.invoice.line': (_get_invoice_line, ['price_unit', 'invoice_line_tax_id', 'quantity', 'discount', 'invoice_id'], 20),
             },
             multi='all'),
         'amount_base': fields.function(
-            _amount_all, 
-            digits_compute=dp.get_precision('Account'), 
+            _amount_all,
+            digits_compute=dp.get_precision('Account'),
             string='Base',
             store=False,
             multi='all'),
         'amount_discount': fields.function(
-            _amount_all, 
-            digits_compute=dp.get_precision('Account'), 
+            _amount_all,
+            digits_compute=dp.get_precision('Account'),
             string='Discount',
             store=False,
             multi='all'),
-
-        }
-
+    }
 
     def button_reset_taxes(self, cr, uid, ids, context=None):
         super(account_invoice, self).button_reset_taxes(cr, uid, ids, context)
@@ -104,7 +102,8 @@ class account_invoice(osv.osv):
                 context = {}
             ctx = context.copy()
             ait_obj = self.pool.get('account.invoice.tax')
-            cr.execute("DELETE FROM account_invoice_tax WHERE invoice_id=%s AND manual is False", (invoice.id,))
+            cr.execute(
+                "DELETE FROM account_invoice_tax WHERE invoice_id=%s AND manual is False", (invoice.id,))
             partner = self.browse(cr, uid, invoice.id, context=ctx).partner_id
             if partner.lang:
                 ctx.update({'lang': partner.lang})
@@ -115,9 +114,10 @@ class account_invoice(osv.osv):
                 taxe['amount'] = float(int(0.1 * invoice.amount_untaxed))
 
                 ait_obj.create(cr, uid, taxe)
-            # Update the stored value (fields.function), so we write to trigger recompute
-            self.pool.get('account.invoice').write(cr, uid, ids, {'invoice_line':[]}, context=ctx)
-
+            # Update the stored value (fields.function), so we write to trigger
+            # recompute
+            self.pool.get('account.invoice').write(
+                cr, uid, ids, {'invoice_line': []}, context=ctx)
 
     def check_tax_lines(self, cr, uid, inv, compute_taxes, ait_obj):
         if not inv.tax_line:
@@ -131,14 +131,17 @@ class account_invoice(osv.osv):
                 key = (tax.tax_code_id.id, tax.base_code_id.id, tax.account_id.id)
                 tax_key.append(key)
                 if not key in compute_taxes:
-                    raise osv.except_osv(_('Warning !'), _('Global taxes defined, but they are not in invoice lines !'))
-                # base = compute_taxes[key]['base']
+                    raise osv.except_osv(_('Warning !'), _(
+                        'Global taxes defined, but they are not in invoice lines !'))
                 base = inv.amount_untaxed
                 if abs(base - tax.base) > inv.company_id.currency_id.rounding:
-                    raise osv.except_osv(_('Warning !'), _('Tax base different!\nClick on compute to update the tax base.'))
+                    raise osv.except_osv(_('Warning !'), _(
+                        'Tax base different!\nClick on compute to update the tax base.'))
             for key in compute_taxes:
                 if not key in tax_key:
-                    raise osv.except_osv(_('Warning !'), _('Taxes are missing!\nClick on compute button.'))
+                    raise osv.except_osv(_('Warning !'), _(
+                        'Taxes are missing!\nClick on compute button.'))
+
 
 class account_invoice_line(osv.osv):
     _name = 'account.invoice.line'
@@ -155,65 +158,65 @@ class account_invoice_line(osv.osv):
                 'discount_amount_total': 0.0,
                 'price_subtotal': 0.0,
                 'price_subtotal_base': 0.0,
-                }
+            }
 
-            price = line.price_unit * (1-(line.discount or 0.0)/100.0)
+            price = line.price_unit * (1 - (line.discount or 0.0) / 100.0)
             taxes = tax_obj.compute_all(
-                cr, uid, line.invoice_line_tax_id, 
-                price, 1.0, product=line.product_id, 
-                address_id=line.invoice_id.address_invoice_id, 
+                cr, uid, line.invoice_line_tax_id,
+                price, 1.0, product=line.product_id,
+                address_id=line.invoice_id.address_invoice_id,
                 partner=line.invoice_id.partner_id)
-            # taxes = tax_obj.compute_all(cr, uid, line.invoice_line_tax_id, price, line.quantity, product=line.product_id, address_id=line.invoice_id.address_invoice_id, partner=line.invoice_id.partner_id)
-            res[line.id]['price_unit_base'] = taxes['total'] * (100.00/(100.00-line.discount))
-            res[line.id]['price_subtotal_base'] = res[line.id]['price_unit_base'] * line.quantity
+            res[line.id]['price_unit_base'] = taxes[
+                'total'] * (100.00 / (100.00 - line.discount))
+            res[line.id]['price_subtotal_base'] = res[
+                line.id]['price_unit_base'] * line.quantity
             res[line.id]['price_subtotal'] = taxes['total'] * line.quantity
-            res[line.id]['discount_amount'] = res[line.id]['price_unit_base'] - taxes['total']
-            res[line.id]['discount_amount_total'] = res[line.id]['discount_amount'] * line.quantity
+            res[line.id]['discount_amount'] = res[line.id][
+                'price_unit_base'] - taxes['total']
+            res[line.id]['discount_amount_total'] = res[
+                line.id]['discount_amount'] * line.quantity
 
-            # if line.invoice_id:
-            #     cur = line.invoice_id.currency_id
-            #     res[line.id] = cur_obj.round(cr, uid, cur, res[line.id])
         return res
 
     _columns = {
         'price_unit_base': fields.function(
-            _amount_line, 
-            string='Base Unit Price', 
+            _amount_line,
+            string='Base Unit Price',
             type='float',
-            digits_compute=dp.get_precision('Account'), 
+            digits_compute=dp.get_precision('Account'),
             store=False,
             multi='subtotal',
-            ),
+        ),
         'price_subtotal_base': fields.function(
-            _amount_line, 
-            string='Base Subtotal', 
+            _amount_line,
+            string='Base Subtotal',
             type='float',
-            digits_compute=dp.get_precision('Account'), 
+            digits_compute=dp.get_precision('Account'),
             store=False,
             multi='subtotal',
-            ),
+        ),
         'discount_amount': fields.function(
-            _amount_line, 
-            string='Amount Disc Per Unit', 
+            _amount_line,
+            string='Amount Disc Per Unit',
             type='float',
-            digits_compute=dp.get_precision('Account'), 
+            digits_compute=dp.get_precision('Account'),
             store=False,
             multi='subtotal',
-            ),
+        ),
         'discount_amount_total': fields.function(
-            _amount_line, 
-            string='Amount Disc', 
+            _amount_line,
+            string='Amount Disc',
             type='float',
-            digits_compute=dp.get_precision('Account'), 
+            digits_compute=dp.get_precision('Account'),
             store=False,
             multi='subtotal',
-            ),
+        ),
         'price_subtotal': fields.function(
-            _amount_line, 
-            string='Subtotal', 
+            _amount_line,
+            string='Subtotal',
             type='float',
-            digits_compute=dp.get_precision('Account'), 
+            digits_compute=dp.get_precision('Account'),
             store=True,
             multi='subtotal',
-            ),
+        ),
     }
