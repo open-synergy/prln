@@ -21,10 +21,9 @@ class account_taxform(osv.osv):
             }
 
             for line in taxform.taxform_line:
-                res[taxform.id]['amount_full'] += line.price_subtotal
+                res[taxform.id]['amount_full'] += line.price_subtotal_base
                 res[taxform.id]['amount_untaxed'] += line.price_subtotal
-                res[taxform.id]['amount_discount'] += line.price_subtotal \
-                    * line.discount / 100.0
+                res[taxform.id]['amount_discount'] += line.discount_amount_total
                 res[taxform.id]['amount_base'] = res[taxform.id]['amount_full'] \
                     - res[taxform.id]['amount_discount'] \
                     + taxform['amount_advance_payment']
