@@ -9,7 +9,7 @@
     'license': 'AGPL-3',
     'category': 'Reporting',
     'depends': [
-        'via_account_taxform',
+        'prln_taxform_vat_rounding',
         'pralon_accounting_reports',
         'report_aeroo_ooo'
     ],

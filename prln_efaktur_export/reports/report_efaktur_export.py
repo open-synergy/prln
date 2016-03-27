@@ -92,42 +92,41 @@ class Parser(report_sxw.rml_parse):
 
             if o.taxform_line:
                 for detail in o.taxform_line:
-                    if detail.discount:
-                        discount = Decimal(detail.discount)
-                    else:
-                        discount = Decimal(0.0)
-
                     price_subtotal = Decimal(detail.price_subtotal)
-                    quantity = Decimal(detail.quantity)
                     data['jumlah_dpp'] += price_subtotal
-                    price_before_disc = price_subtotal * \
-                        (Decimal(100.00) / (Decimal(100.00) - discount))
-                    price_unit = price_before_disc / quantity
 
+                    #price unit
+                    price_unit = detail.price_unit_base
                     price_unit = Decimal(
                         price_unit.quantize(
                             Decimal('.01'), rounding=ROUND_HALF_EVEN))
-                    amount_untaxed = price_unit * quantity
+
+                    #discount
+                    amount_discount = detail.discount_amount_total
+                    amount_discount = Decimal(
+                        amount_discount.quantize(
+                            Decimal('.01'), rounding=ROUND_HALF_EVEN))
+
+                    #subtotal base
+                    amount_untaxed = detail.price_subtotal_base
                     amount_untaxed = Decimal(
                         amount_untaxed.quantize(
                             Decimal('.01'), rounding=ROUND_HALF_EVEN))
 
-                    amount_discount = amount_untaxed * (
-                        discount / Decimal(100.0))
-                    amount_discount = Decimal(
-                        amount_discount.quantize(
-                            Decimal('.01'), rounding=ROUND_HALF_EVEN))
-                    dpp = price_subtotal
+                    #dpp
+                    dpp = detail.price_subtotal
                     dpp = Decimal(
                         dpp.quantize(
                             Decimal('.01'), rounding=ROUND_HALF_EVEN))
+
+                    #ppn
                     ppn = dpp * Decimal(0.1)
                     ppn = Decimal(
                         ppn.quantize(
                             Decimal('.001'), rounding=ROUND_HALF_EVEN))
-
                     data['jumlah_ppn'] += ppn
 
+                    #product name
                     product_name = detail.product_id.product_tmpl_id.name
                     u = u'\N{DEGREE SIGN}'
                     product_name = product_name.replace(u, '')
