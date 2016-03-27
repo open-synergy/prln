@@ -96,25 +96,25 @@ class Parser(report_sxw.rml_parse):
                     data['jumlah_dpp'] += price_subtotal
 
                     #price unit
-                    price_unit = detail.price_unit_base
+                    price_unit = Decimal(detail.price_unit_base)
                     price_unit = Decimal(
                         price_unit.quantize(
                             Decimal('.01'), rounding=ROUND_HALF_EVEN))
 
                     #discount
-                    amount_discount = detail.discount_amount_total
+                    amount_discount = Decimal(detail.discount_amount_total)
                     amount_discount = Decimal(
                         amount_discount.quantize(
                             Decimal('.01'), rounding=ROUND_HALF_EVEN))
 
                     #subtotal base
-                    amount_untaxed = detail.price_subtotal_base
+                    amount_untaxed = Decimal(detail.price_subtotal_base)
                     amount_untaxed = Decimal(
                         amount_untaxed.quantize(
                             Decimal('.01'), rounding=ROUND_HALF_EVEN))
 
                     #dpp
-                    dpp = detail.price_subtotal
+                    dpp = Decimal(detail.price_subtotal)
                     dpp = Decimal(
                         dpp.quantize(
                             Decimal('.01'), rounding=ROUND_HALF_EVEN))
