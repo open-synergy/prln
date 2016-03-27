@@ -76,24 +76,28 @@ class account_taxform_line(osv.osv):
     _columns = {
         'price_unit_base': fields.related(
             'invoice_line_id', 'price_unit_base',
+            string='Base Price Unit',
             type='float',
             store=True,
             digits_compute=dp.get_precision('Account'),
             ),
         'price_subtotal_base': fields.related(
             'invoice_line_id', 'price_subtotal_base',
+            string='Base Subtotal',
             type='float',
             store=True,
             digits_compute=dp.get_precision('Account'),
             ),
         'discount_amount': fields.related(
             'invoice_line_id', 'discount_amount',
+            string='Disc Amount Per Unit',
             type='float',
             store=True,
             digits_compute=dp.get_precision('Account'),
             ),
         'discount_amount_total': fields.related(
             'invoice_line_id', 'discount_amount_total',
+            string='Discount Amount Total',
             type='float',
             store=True,
             digits_compute=dp.get_precision('Account'),
