@@ -16,6 +16,7 @@
     """,
     'website': 'http://opensynergy-indonesia.com',
     'data': [
+        'views/account_taxform_views.xml',
     ],
     'demo': [],
     'installable': True,

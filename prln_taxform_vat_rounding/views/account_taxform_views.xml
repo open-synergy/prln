@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id="account_taxform_line_etax_view_tree" model="ir.ui.view">
+            <field name="name">Tax Line</field>
+            <field name="model">account.taxform.line</field>
+            <field name="inherit_id" ref="via_account_taxform.view_taxline_tree"/>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <data>
+                    <xpath expr="//field[@name='uom']" position="after">
+                        <field name="price_unit_base"/>
+                        <field name="price_subtotal_base"/>
+                        <field name="discount_amount"/>
+                        <field name="discount_amount_total"/>
+                    </xpath>
+                </data>
+            </field>
+        </record>
+    </data>
+</openerp>

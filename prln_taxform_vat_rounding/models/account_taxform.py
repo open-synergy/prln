@@ -68,3 +68,36 @@ class account_taxform(osv.osv):
             },
             multi='all'),
     }
+
+class account_taxform_line(osv.osv):
+    _name = 'account.taxform.line'
+    _inherit = 'account.taxform.line'
+
+    _columns = {
+        'price_unit_base': fields.related(
+            'invoice_line_id', 'price_unit_base',
+            type='float',
+            store=True,
+            digits_compute=dp.get_precision('Account'),
+            ),
+        'price_subtotal_base': fields.related(
+            'invoice_line_id', 'price_subtotal_base',
+            type='float',
+            store=True,
+            digits_compute=dp.get_precision('Account'),
+            ),
+        'discount_amount': fields.related(
+            'invoice_line_id', 'discount_amount',
+            type='float',
+            store=True,
+            digits_compute=dp.get_precision('Account'),
+            ),
+        'discount_amount_total': fields.related(
+            'invoice_line_id', 'discount_amount_total',
+            type='float',
+            store=True,
+            digits_compute=dp.get_precision('Account'),
+            ),
+        }
+
+
