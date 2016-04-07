@@ -40,7 +40,7 @@ class sale_order(osv.osv):
                     vat = True
                 res[order.id]['amount_base'] += line.price_subtotal_base
                 res[order.id]['amount_discount'] += Decimal(line.discount_amount_total)
-            res[order.id]['amount_discount'] = float(res[order.id]['amount_discount'])
+            # res[order.id]['amount_discount'] = float(res[order.id]['amount_discount'])
             res[order.id]['amount_untaxed'] = val1
             if vat:
                 tax = 0.1 * res[order.id]['amount_untaxed']
