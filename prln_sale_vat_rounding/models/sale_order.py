@@ -135,7 +135,8 @@ class sale_order_line(osv.osv):
                 'price_subtotal_base': 0.0,
             }
 
-            price = line.price_unit * (1 - (line.discount or 0.0) / 100.0)
+            # price = line.price_unit * (1 - (line.discount or 0.0) / 100.0)
+            price = line.price_unit
             taxes = tax_obj.compute_all(
                 cr, uid, line.tax_id, price, 1.0,
                 line.order_id.partner_invoice_id.id,
