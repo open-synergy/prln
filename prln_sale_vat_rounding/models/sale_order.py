@@ -4,7 +4,7 @@
 
 from osv import fields, osv
 import decimal_precision as dp
-from Decimal import Decimal
+from decimal import Decimal
 
 
 class sale_order(osv.osv):
