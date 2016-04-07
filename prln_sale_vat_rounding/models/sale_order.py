@@ -4,6 +4,7 @@
 
 from osv import fields, osv
 import decimal_precision as dp
+from Decimal import Decimal
 
 
 class sale_order(osv.osv):
@@ -28,7 +29,7 @@ class sale_order(osv.osv):
                 'amount_tax': 0.0,
                 'amount_total': 0.0,
                 'amount_base': 0.0,
-                'amount_discount': 0.0,
+                'amount_discount': Decimal(0.0),
             }
             val = val1 = tax = 0.0
             vat = False
@@ -38,7 +39,7 @@ class sale_order(osv.osv):
                 if self._amount_line_tax(cr, uid, line, context) >= 0.0:
                     vat = True
                 res[order.id]['amount_base'] += line.price_subtotal_base
-                res[order.id]['amount_discount'] += line.discount_amount_total
+                res[order.id]['amount_discount'] += Decimal(line.discount_amount_total)
             res[order.id]['amount_untaxed'] = val1
             if vat:
                 tax = 0.1 * res[order.id]['amount_untaxed']
