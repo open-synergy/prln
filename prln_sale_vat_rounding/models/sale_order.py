@@ -135,8 +135,7 @@ class sale_order_line(osv.osv):
                 'price_subtotal_base': 0.0,
             }
 
-            # price = line.price_unit * (1 - (line.discount or 0.0) / 100.0)
-            price = line.price_unit
+            price = line.price_unit * (1 - (line.discount or 0.0) / 100.0)
             taxes = tax_obj.compute_all(
                 cr, uid, line.tax_id, price, 1.0,
                 line.order_id.partner_invoice_id.id,
@@ -145,13 +144,14 @@ class sale_order_line(osv.osv):
                 'total'] * line.product_uom_qty
             # res[line.id]['price_unit_base'] = taxes[
             #     'total'] * (100.00 / (100.00 - line.discount))
-            res[line.id]['price_unit_base'] = taxes['total']
+            res[line.id]['price_unit_base'] = line.price_unit
             res[line.id]['price_subtotal_base'] = res[line.id][
                 'price_unit_base'] * line.product_uom_qty
             res[line.id]['price_subtotal'] = taxes[
                 'total'] * line.product_uom_qty
-            res[line.id]['discount_amount'] = res[line.id][
-                'price_unit_base'] - taxes['total']
+            # res[line.id]['discount_amount'] = res[line.id][
+            #     'price_unit_base'] - taxes['total']
+            res[line.id]['discount_amount'] = (line.discount / 100.00) * res[line.id]['price_unit_base']
             res[line.id]['discount_amount_total'] = res[line.id][
                 'discount_amount'] * line.product_uom_qty
         return res
