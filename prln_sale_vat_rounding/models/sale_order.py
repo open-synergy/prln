@@ -101,7 +101,7 @@ class sale_order(osv.osv):
             help="The total amount."),
         'amount_base': fields.function(
             fnct=_amount_all,
-            digits_compute=dp.get_precision('Sale Price'),
+            # digits_compute=dp.get_precision('Sale Price'),
             string='Base',
             store=False,
             multi='sums',
