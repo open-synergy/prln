@@ -89,7 +89,7 @@ class account_taxform_line(osv.osv):
             res[line.id]['price_unit_base'] = inv_line.price_unit
             line_discount = inv_line.price_unit * (inv_line.discount / 100.00)
             res[line.id]['discount_amount'] = line_discount
-            res[line.id]['discount_amount_total'] = line_discount * inv_line.quantity
+            res[line.id]['discount_amount_total'] = (inv_line.price_unit * inv_line.quantity) * (inv_line.discount / 100.00)
         return res
 
 
