@@ -25,7 +25,7 @@ class sale_order(osv.osv):
         res = {}
         for order in self.browse(cr, uid, ids, context=context):
             obj_dec = self.pool.get('decimal.precision')
-            rounding = obj_dec.precision_get('Sale Price')
+            rounding = obj_dec.precision_get(cr, uid, 'Sale Price')
             res[order.id] = {
                 'amount_untaxed': 0.0,
                 'amount_tax': 0.0,
