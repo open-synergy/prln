@@ -36,8 +36,9 @@ class sale_order(osv.osv):
                 if self._amount_line_tax(cr, uid, line, context) >= 0.0:
                     vat = True
                 res[order.id]['amount_base'] += line.price_subtotal_base
-                res[order.id]['amount_discount'] += line.discount_amount_total
-                res[order.id]['amount_untaxed'] += line.price_subtotal
+                line_discount = (line.discount / 100.00) * line.price_subtotal_base
+                res[order.id]['amount_discount'] += line_discount
+                res[order.id]['amount_untaxed'] += (line.price_price_subtotal_base - line_discount)
             if vat:
                 tax = 0.1 * res[order.id]['amount_untaxed']
                 tax = float(int(tax))
@@ -120,7 +121,6 @@ class sale_order_line(osv.osv):
     _inherit = 'sale.order.line'
 
     def _amount_line(self, cr, uid, ids, field_name, arg, context=None):
-        tax_obj = self.pool.get('account.tax')
         res = {}
         if context is None:
             context = {}
@@ -133,22 +133,9 @@ class sale_order_line(osv.osv):
                 'price_subtotal_base': 0.0,
             }
 
-            price = line.price_unit * (1 - (line.discount or 0.0) / 100.0)
-            taxes = tax_obj.compute_all(
-                cr, uid, line.tax_id, price, 1.0,
-                line.order_id.partner_invoice_id.id,
-                line.product_id, line.order_id.partner_id)
-            # res[line.id]['price_subtotal'] = taxes[
-            #     'total'] * line.product_uom_qty
-            # res[line.id]['price_unit_base'] = taxes[
-            #     'total'] * (100.00 / (100.00 - line.discount))
             res[line.id]['price_unit_base'] = line.price_unit
             res[line.id]['price_subtotal_base'] = res[line.id][
                 'price_unit_base'] * line.product_uom_qty
-            # res[line.id]['price_subtotal'] = taxes[
-            #     'total'] * line.product_uom_qty
-            # res[line.id]['discount_amount'] = res[line.id][
-            #     'price_unit_base'] - taxes['total']
             res[line.id]['discount_amount'] = (line.discount / 100.00) * res[line.id]['price_unit_base']
             res[line.id]['discount_amount_total'] = res[line.id][
                 'discount_amount'] * line.product_uom_qty
