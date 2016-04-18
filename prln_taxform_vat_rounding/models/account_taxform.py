@@ -103,7 +103,7 @@ class account_taxform_line(osv.osv):
             store=False,
             digits_compute=dp.get_precision('Account'),
             ),
-        'price_subtotal_base': fields.related(
+        'price_subtotal_base': fields.funtion(
             fnct=_amount_all,
             multi='all',
             string='Base Subtotal',
@@ -111,7 +111,7 @@ class account_taxform_line(osv.osv):
             store=False,
             digits_compute=dp.get_precision('Account'),
             ),
-        'discount_amount': fields.related(
+        'discount_amount': fields.function(
             fnct=_amount_all,
             multi='all',
             string='Disc Amount Per Unit',
@@ -119,7 +119,7 @@ class account_taxform_line(osv.osv):
             store=False,
             digits_compute=dp.get_precision('Account'),
             ),
-        'discount_amount_total': fields.related(
+        'discount_amount_total': fields.function(
             fnct=_amount_all,
             multi='all',
             string='Discount Amount Total',
