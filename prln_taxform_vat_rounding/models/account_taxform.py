@@ -103,7 +103,7 @@ class account_taxform_line(osv.osv):
             store=False,
             digits_compute=dp.get_precision('Account'),
             ),
-        'price_subtotal_base': fields.funtion(
+        'price_subtotal_base': fields.function(
             fnct=_amount_all,
             multi='all',
             string='Base Subtotal',
