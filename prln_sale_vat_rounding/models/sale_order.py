@@ -24,6 +24,8 @@ class sale_order(osv.osv):
     def _amount_all(self, cr, uid, ids, field_name, arg, context=None):
         res = {}
         for order in self.browse(cr, uid, ids, context=context):
+            obj_dec = self.pool.get('decimal.precision')
+            rounding = obj_dec.precision_get('Sale Price')
             res[order.id] = {
                 'amount_untaxed': 0.0,
                 'amount_tax': 0.0,
@@ -37,7 +39,7 @@ class sale_order(osv.osv):
                     vat = True
                 res[order.id]['amount_base'] += (line.price_unit * line.product_uom_qty)
                 line_discount = (line.discount / 100.00) * (line.price_unit * line.product_uom_qty)
-                res[order.id]['amount_discount'] += line_discount
+                res[order.id]['amount_discount'] += round(line_discount, rounding)
                 res[order.id]['amount_untaxed'] += (line.price_subtotal_base - line_discount)
             if vat:
                 tax = 0.1 * res[order.id]['amount_untaxed']
