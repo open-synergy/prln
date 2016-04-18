@@ -35,8 +35,8 @@ class sale_order(osv.osv):
             for line in order.order_line:
                 if self._amount_line_tax(cr, uid, line, context) >= 0.0:
                     vat = True
-                res[order.id]['amount_base'] += line.price_subtotal_base
-                line_discount = (line.discount / 100.00) * line.price_subtotal_base
+                res[order.id]['amount_base'] += (line.price_unit * line.product_uom_qty)
+                line_discount = (line.discount / 100.00) * (line.price_unit * line.product_uom_qty)
                 res[order.id]['amount_discount'] += line_discount
                 res[order.id]['amount_untaxed'] += (line.price_subtotal_base - line_discount)
             if vat:
