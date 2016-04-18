@@ -74,30 +74,54 @@ class account_taxform_line(osv.osv):
     _name = 'account.taxform.line'
     _inherit = 'account.taxform.line'
 
+    def _amount_all(self, cr, uid, ids, name, args, context=None):
+        res = {}
+        obj_dec = self.pool.get('decimal.precision')
+        rounding = obj_dec.precision_get(cr, uid, 'Account')
+        for line in self.browse(cr, uid, ids, context=context):
+            res[line.id] = {
+                'price_unit_base': 0.0,
+                'price_subtotal_base': 0.0,
+                'discount_amount': 0.0,
+                'discount_amount_total': 0.0
+                }
+            inv_line = line.invoice_line_id
+            res[line.id]['price_unit_base'] = inv_line.price_unit
+            line_discount = inv_line.price_unit * (inv_line.discount / 100.00)
+            res[line.id]['discount_amount'] = line_discount
+            res[line.id]['discount_amount_total'] = line_discount * inv_line.quantity
+        return res
+
+
+
     _columns = {
-        'price_unit_base': fields.related(
-            'invoice_line_id', 'price_unit_base',
+        'price_unit_base': fields.function(
+            fnct=_amount_all,
+            multi='all',
             string='Base Price Unit',
             type='float',
-            store=True,
+            store=False,
             digits_compute=dp.get_precision('Account'),
             ),
         'price_subtotal_base': fields.related(
-            'invoice_line_id', 'price_subtotal_base',
+            fnct=_amount_all,
+            multi='all',
             string='Base Subtotal',
             type='float',
-            store=True,
+            store=False,
             digits_compute=dp.get_precision('Account'),
             ),
         'discount_amount': fields.related(
-            'invoice_line_id', 'discount_amount',
+            fnct=_amount_all,
+            multi='all',
             string='Disc Amount Per Unit',
             type='float',
-            store=True,
+            store=False,
             digits_compute=dp.get_precision('Account'),
             ),
         'discount_amount_total': fields.related(
-            'invoice_line_id', 'discount_amount_total',
+            fnct=_amount_all,
+            multi='all',
             string='Discount Amount Total',
             type='float',
             store=True,
