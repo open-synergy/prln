@@ -125,7 +125,7 @@ class account_taxform_line(osv.osv):
             multi='all',
             string='Discount Amount Total',
             type='float',
-            store=True,
+            store=False,
             digits_compute=dp.get_precision('Account'),
             ),
         }
