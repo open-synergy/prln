@@ -160,21 +160,35 @@ class account_invoice_line(osv.osv):
                 'price_subtotal_base': 0.0,
             }
 
-            price = line.price_unit * (1 - (line.discount or 0.0) / 100.0)
-            taxes = tax_obj.compute_all(
-                cr, uid, line.invoice_line_tax_id,
-                price, 1.0, product=line.product_id,
-                address_id=line.invoice_id.address_invoice_id,
-                partner=line.invoice_id.partner_id)
-            res[line.id]['price_unit_base'] = taxes[
-                'total'] * (100.00 / (100.00 - line.discount))
+            invoice = line.invoice_id
+
+            if invoice.type == 'out_invoice':
+                price = line.price_unit
+            else:
+                price = line.price_unit * (1 - (line.discount or 0.0) / 100.0)
+
+            res[line.id]['price_unit_base'] = price
+            res[line.id]['discount_amount'] = (line.discount / 100.00) * \
+                res[line.id]['price_unit_base']
             res[line.id]['price_subtotal_base'] = res[
                 line.id]['price_unit_base'] * line.quantity
-            res[line.id]['price_subtotal'] = taxes['total'] * line.quantity
-            res[line.id]['discount_amount'] = res[line.id][
-                'price_unit_base'] - taxes['total']
             res[line.id]['discount_amount_total'] = res[
                 line.id]['discount_amount'] * line.quantity
+
+            if invoice.type == 'out_invoice':
+                taxes = tax_obj.compute_all(
+                    cr, uid, line.invoice_line_tax_id,
+                    res[line.id]['price_unit_base'], 1.0, product=line.product_id,
+                    address_id=line.invoice_id.address_invoice_id,
+                    partner=line.invoice_id.partner_id)
+            else:
+                taxes = tax_obj.compute_all(
+                    cr, uid, line.invoice_line_tax_id,
+                    price, 1.0, product=line.product_id,
+                    address_id=line.invoice_id.address_invoice_id,
+                    partner=line.invoice_id.partner_id)
+
+            res[line.id]['price_subtotal'] = taxes['total'] * line.quantity
 
         return res
 
