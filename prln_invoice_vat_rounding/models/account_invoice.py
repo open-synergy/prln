@@ -179,7 +179,7 @@ class account_invoice_line(osv.osv):
 
                 taxes = tax_obj.compute_all(
                     cr, uid, line.invoice_line_tax_id,
-                    res[line.id]['price_unit_base'] - res[line.id]['price_discount_amount'], 1.0, product=line.product_id,
+                    res[line.id]['price_unit_base'] - res[line.id]['discount_amount'], 1.0, product=line.product_id,
                     address_id=line.invoice_id.address_invoice_id,
                     partner=line.invoice_id.partner_id)
             else:
