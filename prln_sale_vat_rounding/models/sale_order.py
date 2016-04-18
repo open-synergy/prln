@@ -38,7 +38,7 @@ class sale_order(osv.osv):
                 res[order.id]['amount_base'] += line.price_subtotal_base
                 line_discount = (line.discount / 100.00) * line.price_subtotal_base
                 res[order.id]['amount_discount'] += line_discount
-                res[order.id]['amount_untaxed'] += (line.price_price_subtotal_base - line_discount)
+                res[order.id]['amount_untaxed'] += (line.price_subtotal_base - line_discount)
             if vat:
                 tax = 0.1 * res[order.id]['amount_untaxed']
                 tax = float(int(tax))
