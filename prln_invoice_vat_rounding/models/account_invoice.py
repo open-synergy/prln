@@ -13,6 +13,8 @@ class account_invoice(osv.osv):
 
     def _amount_all(self, cr, uid, ids, name, args, context=None):
         res = {}
+        obj_dec = self.pool.get('decimal.precision')
+        rounding = obj_dec.precision_get(cr, uid, 'Account')
         for invoice in self.browse(cr, uid, ids, context=context):
             res[invoice.id] = {
                 'amount_base': 0.0,
@@ -23,7 +25,8 @@ class account_invoice(osv.osv):
             }
             for line in invoice.invoice_line:
                 res[invoice.id]['amount_base'] += line.price_subtotal_base
-                res[invoice.id]['amount_discount'] += line.discount_amount_total
+                line_discount = round((line.price_unit * (line.discount / 100.00) * line.quantity), rounding)
+                res[invoice.id]['amount_discount'] += line_discount
                 res[invoice.id]['amount_untaxed'] += line.price_subtotal
             for line in invoice.tax_line:
                 res[invoice.id]['amount_tax'] += line.amount
