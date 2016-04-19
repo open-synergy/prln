@@ -26,8 +26,9 @@ class account_invoice(osv.osv):
             for line in invoice.invoice_line:
                 res[invoice.id]['amount_base'] += line.price_subtotal_base
                 line_discount = round((line.price_unit * (line.discount / 100.00) * line.quantity), rounding)
+                line_subtotal = line.price_unit * line.quantity
                 res[invoice.id]['amount_discount'] += line_discount
-                res[invoice.id]['amount_untaxed'] += line.price_subtotal
+                res[invoice.id]['amount_untaxed'] += (line_subtotal - line_discount)
             for line in invoice.tax_line:
                 res[invoice.id]['amount_tax'] += line.amount
 
