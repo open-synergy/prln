@@ -154,7 +154,8 @@ class account_invoice_line(osv.osv):
     def _amount_line(self, cr, uid, ids, prop, unknow_none, unknow_dict):
         res = {}
         tax_obj = self.pool.get('account.tax')
-        # cur_obj = self.pool.get('res.currency')
+        obj_dec = self.pool.get('decimal.precision')
+        rounding = obj_dec.precision_get(cr, uid, 'Account')
         for line in self.browse(cr, uid, ids):
             res[line.id] = {
                 'price_unit_base': 0.0,
@@ -176,8 +177,8 @@ class account_invoice_line(osv.osv):
                 res[line.id]['price_unit_base']
             res[line.id]['price_subtotal_base'] = res[
                 line.id]['price_unit_base'] * line.quantity
-            res[line.id]['discount_amount_total'] = res[
-                line.id]['discount_amount'] * line.quantity
+            res[line.id]['discount_amount_total'] = round((res[
+                line.id]['discount_amount'] * line.quantity), rounding)
 
             taxes = tax_obj.compute_all(
                 cr, uid, line.invoice_line_tax_id,
