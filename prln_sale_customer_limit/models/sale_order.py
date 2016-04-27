@@ -31,7 +31,7 @@ class sale_order(osv.osv):
         if order.partner_id.credit_limit < order.amount_total:
             raise osv.except_osv(_('Warning'),_('Insufficient Limit'))
 
-        wkf_service = netsvc.Localservice('workflow')
+        wkf_service = netsvc.LocalService('workflow')
         wkf_service.trg_validate(uid, 'sale.order', order.id, 'order_confirm')
 
 

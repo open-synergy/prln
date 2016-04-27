@@ -10,6 +10,10 @@
                     <xpath expr="//button[@name='order_confirm']" position="before">
                         <button name="button_check_limit" type="object" string="Confirm Order"/>
                     </xpath>
+                    <xpath expr="//button[@name='order_confirm']" position="attributes">
+                        <attribute name="string">Force Limit</attribute>
+                        <attribute name="groups">group_prln_forceSaleLimit</attribute>
+                    </xpath>
                 </data>
             </field>
         </record>
