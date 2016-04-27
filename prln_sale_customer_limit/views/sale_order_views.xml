@@ -12,7 +12,7 @@
                     </xpath>
                     <xpath expr="//button[@name='order_confirm']" position="attributes">
                         <attribute name="string">Force Limit</attribute>
-                        <attribute name="groups">group_prln_forceSaleLimit</attribute>
+                        <attribute name="groups">prln_sale_customer_limit.group_prln_forceSaleLimit</attribute>
                     </xpath>
                 </data>
             </field>
