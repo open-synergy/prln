@@ -99,7 +99,7 @@ class account_invoice(osv.osv):
     def button_reset_taxes(self, cr, uid, ids, context=None):
         super(account_invoice, self).button_reset_taxes(cr, uid, ids, context)
         for invoice in self.browse(cr, uid, ids):
-            if invoice.type != 'out_invoice':
+            if invoice.type not in ['out_invoice','out_refund']:
                 return True
 
             if context is None:
@@ -167,7 +167,7 @@ class account_invoice_line(osv.osv):
 
             invoice = line.invoice_id
 
-            if invoice.type == 'out_invoice':
+            if invoice.type in ['out_invoice','out_refund']:
                 price = line.price_unit
             else:
                 price = line.price_unit * (1 - (line.discount or 0.0) / 100.0)
@@ -186,7 +186,7 @@ class account_invoice_line(osv.osv):
                 address_id=line.invoice_id.address_invoice_id,
                 partner=line.invoice_id.partner_id)
 
-            if invoice.type == 'out_invoice':
+            if invoice.type in ['out_invoice','out_refund']:
                 res[line.id]['price_subtotal'] = res[line.id]['price_subtotal_base'] -\
                     res[line.id]['discount_amount_total']
             else:
