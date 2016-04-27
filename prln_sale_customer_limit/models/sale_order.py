@@ -3,7 +3,6 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
 from osv import fields, osv
-import decimal_precision as dp
 from tools.translate import _
 import netsvc
 
@@ -28,7 +27,7 @@ class sale_order(osv.osv):
             self._check_limit(cr, uid, order)
 
     def _check_limit(self, cr, uid, order):
-        if order.partner_id.credit_limit < order.amount_total:
+        if order.partner_id.credit_limit < (order.partner_id.credit + order.amount_total):
             raise osv.except_osv(_('Warning'),_('Insufficient Limit'))
 
         wkf_service = netsvc.LocalService('workflow')
