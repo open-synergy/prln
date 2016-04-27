@@ -1,0 +1,17 @@
+<openerp>
+    <data>
+        <record id="form_prln_soCustLimit" model="ir.ui.view">
+            <field name="name">Form Sale Order - Customer Limit</field>
+            <field name="model">sale.order</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="sale.view_order_form"/>
+            <field name="arch" type="xml">
+                <data>
+                    <xpath expr="//button[@name='order_confirm']" position="before">
+                        <button name="button_check_limit" type="object" string="Confirm Order"/>
+                    </xpath>
+                </data>
+            </field>
+        </record>
+    </data>
+</openerp>
