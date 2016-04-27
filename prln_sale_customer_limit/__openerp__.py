@@ -15,6 +15,7 @@
     """,
     'website': 'http://opensynergy-indonesia.com',
     'data': [
+        'security/data_groups.xml',
         'views/sale_order_views.xml',
     ],
     'demo': [],
