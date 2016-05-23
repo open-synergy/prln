@@ -34,6 +34,7 @@ class sale_order(osv.osv):
                 'amount_discount': 0.0,
             }
             vat = False
+            tax = 0.0
             for line in order.order_line:
                 if self._amount_line_tax(cr, uid, line, context) >= 0.0:
                     vat = True
